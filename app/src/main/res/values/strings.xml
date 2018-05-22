@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Weather-App</string>
+    <string name="gpsBtn">위치 확인</string>
+    <string name="LRtv">현재 위치</string>
 </resources>
