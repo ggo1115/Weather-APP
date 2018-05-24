@@ -21,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
     Button CheckGPS;
     TextView txtLat;
     TextView txtLon;
+    TextView txtAddr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
         CheckGPS = (Button) findViewById(R.id.gpsBtn);
         txtLat = (TextView) findViewById(R.id.textlat);
         txtLon = (TextView) findViewById(R.id.textLon);
+        txtAddr = (TextView) findViewById(R.id.textAddr);
 
         CheckGPS.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -47,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(MainActivity.this, "GPS켜짐", Toast.LENGTH_SHORT).show();
                         txtLat.setText("위도 : " + gpsActivity.getLat());
                         txtLon.setText("경도 : " + gpsActivity.getLon());
+                        txtAddr.setText("주소 : " + gpsActivity.getAddrValue());
 
                     } else {
                         // GPS가 꺼져있을 때

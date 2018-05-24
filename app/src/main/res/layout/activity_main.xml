@@ -25,4 +25,10 @@
         android:layout_height="wrap_content"
         android:text="경도 : " />
 
+    <TextView
+        android:id="@+id/textAddr"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="주소명 : " />
+
 </LinearLayout>

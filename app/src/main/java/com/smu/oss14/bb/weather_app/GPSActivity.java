@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -20,6 +22,9 @@ import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.io.IOException;
+import java.util.List;
+
 public class GPSActivity extends Service implements LocationListener
 {
     int requestCode = 11;                                           //요청 코드
@@ -28,17 +33,20 @@ public class GPSActivity extends Service implements LocationListener
     boolean isNetworkEnabled = false;                              //NetWork 사용유무
     boolean isGetlc = false;                                        //GPS상태값
 
+
     private double lat;                                             //위도
     private double lon;                                             //경도
+    private String[] Addr;                                           //
+    private String AddrValue;                                       //
+
 
     private static final long MINIMUM_DIS = 10;                    //최소 GPS 업데이트 거리 : 10미터
     private static final long MINIMUM_TIME = 60000;                //최소 GPS 업데이트 시간 : 1분(60000ms)
 
     Activity activity;
-
     LocationManager locationMng;
-
     Location location;
+    Geocoder geocoder;
 
 
     //생성자
@@ -113,20 +121,24 @@ public class GPSActivity extends Service implements LocationListener
                 isNetworkEnabled = locationMng.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
                 //GPS 또는 NetWork 사용 가능할 때
-                if(isNetworkEnabled || isGPSEnabled){
+                if(isNetworkEnabled || isGPSEnabled) {
 
                     //GPS 상태값은 true가 됨
                     this.isGetlc = true;
 
                     //네트워크로부터 위치값 받아옴
-                    if(isNetworkEnabled){
+                    if (isNetworkEnabled) {
                         locationMng.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MINIMUM_TIME, MINIMUM_DIS, this);
 
-                        if(locationMng != null){
+                        if (locationMng != null) {
                             location = locationMng.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-                            if(location != null){
+                            if (location != null) {
                                 lat = location.getLatitude();
                                 lon = location.getLongitude();
+
+                                /* 3. 역지오코딩 */
+                                geocoder = new Geocoder(activity);
+                                AddrValue = reverseGeocoding();
                             }
                         }
 
@@ -134,21 +146,28 @@ public class GPSActivity extends Service implements LocationListener
 
 
                     //GPS로부터 위치값 받아옴
-                    if(isGPSEnabled){
-                        if(location == null){
+                    if (isGPSEnabled) {
+                        if (location == null) {
                             locationMng.requestLocationUpdates(LocationManager.GPS_PROVIDER, MINIMUM_TIME, MINIMUM_DIS, this);
 
-                            if(locationMng != null){
+                            if (locationMng != null) {
                                 location = locationMng.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
-                                if(location != null){
+                                if (location != null) {
                                     lat = location.getLatitude();
                                     lon = location.getLongitude();
+
+                                    /*  3. 역지오코딩 */
+
+                                    geocoder = new Geocoder(activity);
+                                    AddrValue = reverseGeocoding();
                                 }
                             }
                         }
                     }
                 }
+
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -189,6 +208,14 @@ public class GPSActivity extends Service implements LocationListener
         return this.isGetlc;
     }
 
+    public void setAddrValue(String value) {
+        this.AddrValue = value;
+    }
+
+    public String getAddrValue(){
+        return this.AddrValue;
+    }
+
     //GPS값을 가져오지 못할 때 즉, GPS가 꺼져있을 때 설정창으로 이동할 수 있게 해주는 alert 창 띄우는 method
     public void SettingAlert(){
        AlertDialog.Builder alDialog = new AlertDialog.Builder(activity);
@@ -207,6 +234,32 @@ public class GPSActivity extends Service implements LocationListener
                dialog.cancel();
            }
        }).show();
+    }
+
+    // GPS를 통해 얻어온 위도, 경도 값으로 주소값 받아오는 method
+    public String reverseGeocoding(){
+        List<Address> addrList = null;
+
+        try{
+            addrList = geocoder.getFromLocation(lat, lon, 10);              //위도, 경도값에 대한 결과값 받아옴(최대 10개)
+        }catch (IOException e){
+            e.printStackTrace();
+            Log.e("err", "서버->주소변환시 에러");
+        }
+
+        if(addrList != null) {
+            if (addrList.size() == 0) {
+                Toast.makeText(activity, "주소 없음.", Toast.LENGTH_SHORT).show();
+            } else {
+                StringBuilder AddrSB = new StringBuilder();
+                Addr = addrList.get(0).toString().split(" ");                       //공백 기준으로 문자열 자름
+                for (int i = 1; i < 5; i++) {
+                    AddrSB.append(Addr[i]);                                                 //자른 문자열 StringBuilder 객체에 삽입([1] : 시/도,  [2] : 시/군/구.  [3] : 읍/면/동,  [4] : 리?)
+                }
+                return AddrSB.toString();
+            }
+        }
+        return null;
     }
 
     @Nullable
@@ -234,4 +287,6 @@ public class GPSActivity extends Service implements LocationListener
     public void onProviderDisabled(String provider) {
 
     }
+
+
 }

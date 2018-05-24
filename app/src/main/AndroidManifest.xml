@@ -3,7 +3,9 @@
     package="com.smu.oss14.bb.weather_app">
 
     <!-- 일반 권한 설정 (1 : 위치 권한) -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>]
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+
 
     <application
         android:allowBackup="true"
