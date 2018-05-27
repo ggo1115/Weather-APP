@@ -253,8 +253,8 @@ public class GPSActivity extends Service implements LocationListener
             } else {
                 StringBuilder AddrSB = new StringBuilder();
                 Addr = addrList.get(0).toString().split(" ");                       //공백 기준으로 문자열 자름
-                for (int i = 1; i < 5; i++) {
-                    AddrSB.append(Addr[i]);                                                 //자른 문자열 StringBuilder 객체에 삽입([1] : 시/도,  [2] : 시/군/구.  [3] : 읍/면/동,  [4] : 리?)
+                for (int i = 1; i < 4; i++) {
+                    AddrSB.append(Addr[i] + ".");                                                 //자른 문자열 StringBuilder 객체에 삽입([1] : 시/도,  [2] : 시/군/구.  [3] : 읍/면/동,  [4] : 리?)
                 }
                 return AddrSB.toString();
             }
