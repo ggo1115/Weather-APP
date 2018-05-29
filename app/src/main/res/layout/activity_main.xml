@@ -8,12 +8,6 @@
     tools:context=".MainActivity">
 
     <Button
-        android:id="@+id/CheckAD"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="날씨 확인"/>
-
-    <Button
         android:id="@+id/gpsBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -36,6 +30,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="주소명 : " />
+
+    <TextView
+        android:id="@+id/txtLcCode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="지역코드 : " />
+
+    <Button
+        android:id="@+id/CheckAD"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="날씨 확인" />
 
     <ScrollView
         android:layout_width="match_parent"

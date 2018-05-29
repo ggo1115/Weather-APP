@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity{
     TextView txtLat;    //위도txt
     TextView txtLon;    //경도txt
     TextView txtAddr;   //주소명txt
+    TextView txtLcCode; //지역코드txt
     TextView txtWeatherParse;   //날씨파싱정보txt
 
     String weather_result = ""; //날씨파싱정보 담는 문자열
@@ -59,9 +60,10 @@ public class MainActivity extends AppCompatActivity{
         txtLon = (TextView) findViewById(R.id.textLon);
         txtAddr = (TextView) findViewById(R.id.textAddr);
         txtWeatherParse = (TextView) findViewById(R.id.textView);
+        txtLcCode = (TextView) findViewById(R.id.txtLcCode);
 
 
-        CheckWeather.setOnClickListener(new View.OnClickListener() {
+        /*CheckWeather.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 new Thread(){
@@ -76,7 +78,7 @@ public class MainActivity extends AppCompatActivity{
 
                 txtWeatherParse.setText(getWeather_result());
             }
-        });
+        });*/
 
         CheckGPS.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -91,10 +93,11 @@ public class MainActivity extends AppCompatActivity{
                     if (gpsActivity.isGetlc) {
                         //GPS가 켜져있으면
 
-                        Toast.makeText(MainActivity.this, "GPS켜짐", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(MainActivity.this, "GPS켜짐", Toast.LENGTH_SHORT).show();
                         txtLat.setText("위도 : " + gpsActivity.getLat());
                         txtLon.setText("경도 : " + gpsActivity.getLon());
                         txtAddr.setText("주소 : " + gpsActivity.getAddrValue());
+                        txtLcCode.setText("지역코드 : " + gpsActivity.getLnCode());
 
                     } else {
                         // GPS가 꺼져있을 때
@@ -296,5 +299,4 @@ public class MainActivity extends AppCompatActivity{
             return entry;
         }
     }
-
 }

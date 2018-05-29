@@ -22,6 +22,12 @@ import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -36,8 +42,9 @@ public class GPSActivity extends Service implements LocationListener
 
     private double lat;                                             //위도
     private double lon;                                             //경도
-    private String[] Addr;                                           //
-    private String AddrValue;                                       //
+    private String[] Addr;                                           //지역값_배역
+    private String AddrValue;                                       //지역 주소 값 담음 (.)단위로 끊어서
+    private String LCode;                                           //지역코드
 
 
     private static final long MINIMUM_DIS = 10;                    //최소 GPS 업데이트 거리 : 10미터
@@ -139,6 +146,10 @@ public class GPSActivity extends Service implements LocationListener
                                 /* 3. 역지오코딩 */
                                 geocoder = new Geocoder(activity);
                                 AddrValue = reverseGeocoding();
+
+                                /* 4. 지역코드 값 받아오기 */
+
+                                LoCode(Addr[1], Addr[2]);
                             }
                         }
 
@@ -161,6 +172,7 @@ public class GPSActivity extends Service implements LocationListener
 
                                     geocoder = new Geocoder(activity);
                                     AddrValue = reverseGeocoding();
+
                                 }
                             }
                         }
@@ -216,6 +228,14 @@ public class GPSActivity extends Service implements LocationListener
         return this.AddrValue;
     }
 
+    public String getLnCode() {
+        return LCode;
+    }
+
+    public void setLnCode(String lCode) {
+        LCode = lCode;
+    }
+
     //GPS값을 가져오지 못할 때 즉, GPS가 꺼져있을 때 설정창으로 이동할 수 있게 해주는 alert 창 띄우는 method
     public void SettingAlert(){
        AlertDialog.Builder alDialog = new AlertDialog.Builder(activity);
@@ -253,14 +273,42 @@ public class GPSActivity extends Service implements LocationListener
             } else {
                 StringBuilder AddrSB = new StringBuilder();
                 Addr = addrList.get(0).toString().split(" ");                       //공백 기준으로 문자열 자름
-                for (int i = 1; i < 4; i++) {
+                for (int i = 1; i < 3; i++) {
                     AddrSB.append(Addr[i] + ".");                                                 //자른 문자열 StringBuilder 객체에 삽입([1] : 시/도,  [2] : 시/군/구.  [3] : 읍/면/동,  [4] : 리?)
                 }
+                AddrSB.append(Addr[3]);
+
                 return AddrSB.toString();
             }
         }
         return null;
     }
+
+   //지역코드 확인
+    public void LoCode(final String AddrValue_1, final String AddrValue_2){
+
+        DatabaseReference DBR = FirebaseDatabase.getInstance().getReference().child("LocationCode").child(Addr[1]).child(Addr[2]);
+
+        DBR.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                LCode = (dataSnapshot.getValue(String.class));
+                Log.e("지역코드 : ", LCode);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+
+
+    }
+
+
+
 
     @Nullable
     @Override
