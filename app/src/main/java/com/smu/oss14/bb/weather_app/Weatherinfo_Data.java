@@ -33,7 +33,9 @@ public class Weatherinfo_Data {
 
 
     //값이 주어졌을 때 생성자
-    public Weatherinfo_Data(String date, String hour, String temp_cur, String temp_max, String temp_min, String sky_state, String pty, String wf, String pop, String ws, String wd, String reh){
+    public Weatherinfo_Data(String date, String hour, String temp_cur,
+                            String temp_max, String temp_min, String sky_state,
+                            String pty, String wf, String pop, String ws, String wd, String reh){
         this.setDate(date);
         this.setHour(hour);
         this.setTemp_cur(temp_cur);

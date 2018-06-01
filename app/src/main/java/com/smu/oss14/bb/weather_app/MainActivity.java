@@ -19,6 +19,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import org.xml.sax.SAXException;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -44,10 +51,12 @@ public class MainActivity extends AppCompatActivity{
     TextView txtLat;    //위도txt
     TextView txtLon;    //경도txt
     TextView txtAddr;   //주소명txt
-    TextView txtLcCode; //지역코드txt
     TextView txtWeatherParse;   //날씨파싱정보txt
 
     String weather_result = ""; //날씨파싱정보 담는 문자열
+
+    Location_Data LData = new Location_Data();
+    ArrayList<Weatherinfo_Data> WDataList = new ArrayList<Weatherinfo_Data>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,44 +69,39 @@ public class MainActivity extends AppCompatActivity{
         txtLon = (TextView) findViewById(R.id.textLon);
         txtAddr = (TextView) findViewById(R.id.textAddr);
         txtWeatherParse = (TextView) findViewById(R.id.textView);
-        txtLcCode = (TextView) findViewById(R.id.txtLcCode);
 
-
-        /*CheckWeather.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new Thread(){
-                    public void run(){
-
-                        //ReceiverShortWeather를 통한 날씨파싱시도
-                        ReceiveShortWeather ReceiveWeather = new ReceiveShortWeather();
-                        //지역코드값 넘겨줘서 실행(추후 DB통해 넣을 예정)
-                        ReceiveWeather.execute("1159068000");
-                    }
-                }.start();
-
-                txtWeatherParse.setText(getWeather_result());
-            }
-        });*/
 
         CheckGPS.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 GPSActivity gpsActivity = new GPSActivity(MainActivity.this);
-                gpsActivity.UseGPS();
+                LData = gpsActivity.UseGPS();
 
                 if(gpsActivity.usable_FINE_LOCATION) {
                     //usable_FINE_LOCATION일때
 
                     if (gpsActivity.isGetlc) {
                         //GPS가 켜져있으면
-
                         //Toast.makeText(MainActivity.this, "GPS켜짐", Toast.LENGTH_SHORT).show();
-                        txtLat.setText("위도 : " + gpsActivity.getLat());
-                        txtLon.setText("경도 : " + gpsActivity.getLon());
-                        txtAddr.setText("주소 : " + gpsActivity.getAddrValue());
-                        txtLcCode.setText("지역코드 : " + gpsActivity.getLnCode());
+                        txtLat.setText("위도 : " + LData.getLat());
+                        txtLon.setText("경도 : " + LData.getLon());
+                        txtAddr.setText("주소 : " + LData.getAddr());
+
+                        String[] Adresult = LData.getAddrValue();
+
+                        final DatabaseReference DBR = FirebaseDatabase.getInstance().getReference().child("LocationCode").child(Adresult[0]).child(Adresult[1]);
+                        DBR.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                LData.setLCcode(dataSnapshot.getValue(String.class));
+                                Toast.makeText(MainActivity.this, LData.getLCcode(), Toast.LENGTH_SHORT).show();
+                            }
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                            }
+                        });
+
 
                     } else {
                         // GPS가 꺼져있을 때
@@ -110,193 +114,46 @@ public class MainActivity extends AppCompatActivity{
 
         });
 
-    }
-
-    public String getWeather_result() {
-        return weather_result;
-    }
-
-    public void setWeather_result(String weather_result) {
-        this.weather_result = weather_result;
-    }
-
-
-    //날씨파싱클래스
-    public class ReceiveShortWeather extends AsyncTask<String, Void, Void>{
-
-        //Weatherinfo_Data : 날씨 정보 Class
-        //날씨정보 클래스를 배열화함(여러시간의 날씨정보 얻기 위함)
-        ArrayList<Weatherinfo_Data> weather_Info = new ArrayList<>();
-
-
-        @Override
-        protected Void doInBackground(String... strings) {
-
-            //날씨파싱url + 지역코드
-            String urlXML = "http://www.kma.go.kr/wid/queryDFSRSS.jsp?zone=" + strings;
-
-            OkHttpClient client = new OkHttpClient();
-
-            Request req = new Request.Builder().url(urlXML).build();
-
-            Response res = null;
-
-            try{
-                res = client.newCall(req).execute();
-                weather_Info = parsing(res.body().string());
-
-                String weatherdata = "";
-                int i= 0;
-                while(i < weather_Info.size()) {
-                    weatherdata += "날짜코드 : " + weather_Info.get(i).getDate() + "\n";
-                    weatherdata += "시간단위 : " + weather_Info.get(i).getHour() + "\n";
-                    weatherdata += "현재온도 : " + weather_Info.get(i).getTemp_cur() + "\n";
-                    weatherdata += "최고온도 : " + weather_Info.get(i).getTemp_max() + "\n";
-                    weatherdata += "최저온도 : " + weather_Info.get(i).getTemp_min() + "\n";
-                    weatherdata += "하늘상태코드 : " + weather_Info.get(i).getSky_state() + "\n";
-                    weatherdata += "강수상태코드 : " + weather_Info.get(i).getPty() + "\n";
-                    weatherdata += "날씨상태 : " + weather_Info.get(i).getWf() + "\n";
-                    weatherdata += "강수확률 : " + weather_Info.get(i).getPop() + "\n";
-                    weatherdata += "풍속 : " + weather_Info.get(i).getWs() + "\n";
-                    weatherdata += "풍향 : " + weather_Info.get(i).getWd() + "\n";
-                    weatherdata += "습도 : " + weather_Info.get(i).getReh() + "\n";
-                    weatherdata += "==========================================\n";
-                    i++;
-                }
-                setWeather_result(weatherdata);
-
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-        }
-
-        public ArrayList<Weatherinfo_Data> parsing(String xml){
-            String tName = "";
-            ArrayList<Weatherinfo_Data> entry = new ArrayList<>();
-
-            try{
-                XmlPullParserFactory xmlfactory = XmlPullParserFactory.newInstance();
-                XmlPullParser parse = xmlfactory.newPullParser();
-                parse.setInput(new StringReader(xml));
-
-
-                //중복값 빼기 위함(중복값 처리시, 데이터의 값들 모두 null이 됨)
-                boolean done = false;
-                boolean isTag = false;
-                boolean isDate = false;
-                boolean isHour = false;
-                boolean isTmp = false;
-                boolean isTmx = false;
-                boolean isTmn = false;
-                boolean isSky = false;
-                boolean isPty = false;
-                boolean isWfkor = false;
-                boolean isPop = false;
-                boolean isWs = false;
-                boolean isWd = false;
-                boolean isReh = false;
-
-                int eventTp = parse.getEventType();
-                int i = 0;
-
-                while(eventTp != XmlPullParser.END_DOCUMENT && !done){
-                    switch (eventTp){
-                        case XmlPullParser.START_TAG:
-                            tName = parse.getName();
-                            if(tName.equals("data")){
-                                isTag = true;
-                                entry.add(new Weatherinfo_Data());
-                            }
-                            break;
-                        case XmlPullParser.TEXT:
-                            if(isTag == true){
-                                if(tName.equals("day") && !isDate) {
-                                    entry.get(i).setDate(parse.getText());
-                                    isDate = true;
-                                }
-                                else if(tName.equals("hour") && !isHour) {
-                                    entry.get(i).setHour(parse.getText());
-                                    isHour = true;
-                                }
-                                else if(tName.equals("temp") && !isTmp){
-                                    entry.get(i).setTemp_cur(parse.getText());
-                                    isTmp = true;
-                                }
-                                else if(tName.equals("tmx") && !isTmx) {
-                                    entry.get(i).setTemp_max(parse.getText());
-                                    isTmx = true;
-                                }
-                                else if(tName.equals("tmn") && !isTmn) {
-                                    entry.get(i).setTemp_min(parse.getText());
-                                    isTmn = true;
-                                }
-                                else if(tName.equals("sky") && !isSky) {
-                                    entry.get(i).setSky_state(parse.getText());
-                                    isSky = true;
-                                }
-                                else if(tName.equals("pty") && !isPty) {
-                                    entry.get(i).setPty(parse.getText());
-                                    isPty = true;
-                                }
-                                else if(tName.equals("wfKor") && !isWfkor){
-                                    entry.get(i).setWf(parse.getText());
-                                    isWfkor = true;
-                                }
-                                else if(tName.equals("pop") && !isPop) {
-                                    entry.get(i).setPop(parse.getText());
-                                    isPop = true;
-                                }
-                                else if(tName.equals("ws") && !isWs) {
-                                    entry.get(i).setWs(parse.getText());
-                                    isWs = true;
-                                }
-                                else if(tName.equals("wdKor") && !isWd) {
-                                    entry.get(i).setWd(parse.getText());
-                                    isWd = true;
-                                }
-                                else if(tName.equals("reh") && !isReh) {
-                                    entry.get(i).setReh(parse.getText());
-                                    isReh = true;
-                                }
-
-                                //Log.d("result : ", parse.getName() +" - "+parse.getText());
-                            }
-                            break;
-                        case XmlPullParser.END_TAG:
-                            tName = parse.getName();
-                            if(tName.equals("data")){
+        CheckWeather.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new Thread(){
+                    public void run(){
+                        //ReceiverShortWeather를 통한 날씨파싱시도
+                        ReceiveWeather ReceiveWeather = new ReceiveWeather();
+                        //지역코드값 넘겨줘서 실행(추후 DB통해 넣을 예정)
+                        Response response = ReceiveWeather.XMLloading("1159068000");
+                        try {
+                            WDataList = ReceiveWeather.parsing(response.body().string());
+                            int i= 0;
+                            while(i < WDataList.size()) {
+                                weather_result += "날짜코드 : " + WDataList.get(i).getDate() + "\n";
+                                weather_result += "시간단위 : " +WDataList.get(i).getHour() + "\n";
+                                weather_result += "현재온도 : " + WDataList.get(i).getTemp_cur() + "\n";
+                                weather_result += "최고온도 : " + WDataList.get(i).getTemp_max() + "\n";
+                                weather_result += "최저온도 : " + WDataList.get(i).getTemp_min() + "\n";
+                                weather_result += "하늘상태코드 : " + WDataList.get(i).getSky_state() + "\n";
+                                weather_result += "강수상태코드 : " + WDataList.get(i).getPty() + "\n";
+                                weather_result += "날씨상태 : " + WDataList.get(i).getWf() + "\n";
+                                weather_result += "강수확률 : " + WDataList.get(i).getPop() + "\n";
+                                weather_result += "풍속 : " + WDataList.get(i).getWs() + "\n";
+                                weather_result += "풍향 : " + WDataList.get(i).getWd() + "\n";
+                                weather_result += "습도 : " + WDataList.get(i).getReh() + "\n";
+                                weather_result += "==========================================\n";
                                 i++;
-                                isTag = false;
-                                isDate = false;
-                                isHour = false;
-                                isTmp = false;
-                                isTmx = false;
-                                isTmn = false;
-                                isSky = false;
-                                isPty = false;
-                                isWfkor = false;
-                                isPop = false;
-                                isWs = false;
-                                isWd = false;
-                                isReh = false;
                             }
-                            break;
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
                     }
-                    eventTp = parse.next();
-                }
-            } catch (XmlPullParserException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
+                }.start();
+
+                txtWeatherParse.setText(weather_result);
             }
-            Log.d("parsing", "완료");
-            return entry;
-        }
+        });
+
     }
+
+
 }

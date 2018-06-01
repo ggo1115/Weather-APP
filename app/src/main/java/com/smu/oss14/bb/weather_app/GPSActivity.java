@@ -22,13 +22,8 @@ import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class GPSActivity extends Service implements LocationListener
@@ -39,13 +34,11 @@ public class GPSActivity extends Service implements LocationListener
     boolean isNetworkEnabled = false;                              //NetWork 사용유무
     boolean isGetlc = false;                                        //GPS상태값
 
-
     private double lat;                                             //위도
     private double lon;                                             //경도
-    private String[] Addr;                                           //지역값_배역
-    private String AddrValue;                                       //지역 주소 값 담음 (.)단위로 끊어서
+    private String[] AddrValue;                                     //지역값_배역
+    private String Addr;                                            //지역 주소 값 담음 (.)단위로 끊어서
     private String LCode;                                           //지역코드
-
 
     private static final long MINIMUM_DIS = 10;                    //최소 GPS 업데이트 거리 : 10미터
     private static final long MINIMUM_TIME = 60000;                //최소 GPS 업데이트 시간 : 1분(60000ms)
@@ -55,6 +48,7 @@ public class GPSActivity extends Service implements LocationListener
     Location location;
     Geocoder geocoder;
 
+    Location_Data Location_data = new Location_Data();
 
     //생성자
     public GPSActivity(Activity activity){
@@ -62,23 +56,18 @@ public class GPSActivity extends Service implements LocationListener
     }
 
     //권한 설정 및 위치정보 확인
-    public void UseGPS(){
-
+    public Location_Data UseGPS(){
         /*
          1. 버전 확인 및 권한 설정 확인
          */
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
             // 마시멜로 이상 버전
-
             if(activity.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED){
                 // ACCESS_FINE_LOCATION 권한이 거부되어있는 경우
-
                 final String[] pms = {Manifest.permission.ACCESS_FINE_LOCATION};
-
                 if (activity.shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)){
                     // 이전에 거부한 적이 존재하는 경우
-
                     AlertDialog.Builder aldia = new AlertDialog.Builder(activity);
                     aldia.setTitle("위치 권한 필요")
                             .setMessage("이 기능 이용하기 위해선 \"위치접근\" 권한이 필요합니다.")
@@ -91,12 +80,10 @@ public class GPSActivity extends Service implements LocationListener
                                     }
                                 }
                             }).create().show();
-
                     Log.d("check3", "usable_FINE_LOCATION = "+String.valueOf(usable_FINE_LOCATION));
                 }
                 else {
                     //거부한 적이 없는 즉, 최초 실행인 경우
-
                     activity.requestPermissions(pms, requestCode);
                     Log.d("check2", "usable_FINE_LOCATION = "+String.valueOf(usable_FINE_LOCATION));
                 }
@@ -113,11 +100,8 @@ public class GPSActivity extends Service implements LocationListener
         }
 
         /* 2. GPS 사용 */
-
-
         //ACCESS_FINE_LOCATION이 허용되었을 때만 실행가능
         if(usable_FINE_LOCATION == true){
-
             try{
                 locationMng = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
 
@@ -129,62 +113,51 @@ public class GPSActivity extends Service implements LocationListener
 
                 //GPS 또는 NetWork 사용 가능할 때
                 if(isNetworkEnabled || isGPSEnabled) {
-
                     //GPS 상태값은 true가 됨
                     this.isGetlc = true;
-
                     //네트워크로부터 위치값 받아옴
                     if (isNetworkEnabled) {
                         locationMng.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MINIMUM_TIME, MINIMUM_DIS, this);
-
                         if (locationMng != null) {
                             location = locationMng.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                             if (location != null) {
                                 lat = location.getLatitude();
+                                Location_data.setLat(lat);
                                 lon = location.getLongitude();
-
-                                /* 3. 역지오코딩 */
-                                geocoder = new Geocoder(activity);
-                                AddrValue = reverseGeocoding();
-
-                                /* 4. 지역코드 값 받아오기 */
-
-                                LoCode(Addr[1], Addr[2]);
+                                Location_data.setLon(lon);
                             }
                         }
-
                     }
-
-
                     //GPS로부터 위치값 받아옴
                     if (isGPSEnabled) {
                         if (location == null) {
                             locationMng.requestLocationUpdates(LocationManager.GPS_PROVIDER, MINIMUM_TIME, MINIMUM_DIS, this);
-
                             if (locationMng != null) {
                                 location = locationMng.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-
                                 if (location != null) {
                                     lat = location.getLatitude();
+                                    Location_data.setLat(lat);
                                     lon = location.getLongitude();
-
-                                    /*  3. 역지오코딩 */
-
-                                    geocoder = new Geocoder(activity);
-                                    AddrValue = reverseGeocoding();
-
+                                    Location_data.setLon(lon);
                                 }
                             }
                         }
                     }
+
+                    /* 3. 역지오코딩 */
+                    geocoder = new Geocoder(activity);
+                    reverseGeocoding();
+                    Location_data.setAddrValue(new String[]{AddrValue[1],AddrValue[2]});
+                    Location_data.setAddr(Addr);
+                    Log.e("Addr", Addr);
+                    Log.e("AddrValue", AddrValue[1]+AddrValue[2]);
                 }
-
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
+        return Location_data;
     }
 
     //GPS 종료
@@ -192,48 +165,6 @@ public class GPSActivity extends Service implements LocationListener
         if(locationMng != null){
             locationMng.removeUpdates(GPSActivity.this);
         }
-    }
-
-    public double getLat() {
-        if(location != null){
-            lat = location.getLatitude();
-        }
-        return lat;
-    }
-
-    public void setLat(double lat) {
-        this.lat = lat;
-    }
-
-    public double getLon() {
-        if(location != null){
-            lon = location.getLongitude();
-        }
-        return lon;
-    }
-
-    public void setLon(double lon) {
-        this.lon = lon;
-    }
-
-    public boolean isGetlc() {
-        return this.isGetlc;
-    }
-
-    public void setAddrValue(String value) {
-        this.AddrValue = value;
-    }
-
-    public String getAddrValue(){
-        return this.AddrValue;
-    }
-
-    public String getLnCode() {
-        return LCode;
-    }
-
-    public void setLnCode(String lCode) {
-        LCode = lCode;
     }
 
     //GPS값을 가져오지 못할 때 즉, GPS가 꺼져있을 때 설정창으로 이동할 수 있게 해주는 alert 창 띄우는 method
@@ -257,84 +188,48 @@ public class GPSActivity extends Service implements LocationListener
     }
 
     // GPS를 통해 얻어온 위도, 경도 값으로 주소값 받아오는 method
-    public String reverseGeocoding(){
+    public void reverseGeocoding(){
         List<Address> addrList = null;
-
         try{
             addrList = geocoder.getFromLocation(lat, lon, 10);              //위도, 경도값에 대한 결과값 받아옴(최대 10개)
         }catch (IOException e){
             e.printStackTrace();
             Log.e("err", "서버->주소변환시 에러");
         }
-
         if(addrList != null) {
             if (addrList.size() == 0) {
                 Toast.makeText(activity, "주소 없음.", Toast.LENGTH_SHORT).show();
             } else {
                 StringBuilder AddrSB = new StringBuilder();
-                Addr = addrList.get(0).toString().split(" ");                       //공백 기준으로 문자열 자름
+                AddrValue = addrList.get(0).toString().split(" ");                       //공백 기준으로 문자열 자름
+                Log.d("Addr", AddrValue[1]+AddrValue[2]);
                 for (int i = 1; i < 3; i++) {
-                    AddrSB.append(Addr[i] + ".");                                                 //자른 문자열 StringBuilder 객체에 삽입([1] : 시/도,  [2] : 시/군/구.  [3] : 읍/면/동,  [4] : 리?)
+                    AddrSB.append(AddrValue[i] + " ");                                                 //자른 문자열 StringBuilder 객체에 삽입([1] : 시/도,  [2] : 시/군/구.  [3] : 읍/면/동,  [4] : 리?)
                 }
-                AddrSB.append(Addr[3]);
-
-                return AddrSB.toString();
+                Addr = AddrSB.toString();
             }
         }
-        return null;
     }
-
-   //지역코드 확인
-    public void LoCode(final String AddrValue_1, final String AddrValue_2){
-
-        DatabaseReference DBR = FirebaseDatabase.getInstance().getReference().child("LocationCode").child(Addr[1]).child(Addr[2]);
-
-        DBR.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                LCode = (dataSnapshot.getValue(String.class));
-                Log.e("지역코드 : ", LCode);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-
-
-
-    }
-
-
-
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         return null;
     }
-
     @Override
     public void onLocationChanged(Location location) {
 
     }
-
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
 
     }
-
     @Override
     public void onProviderEnabled(String provider) {
 
     }
-
     @Override
     public void onProviderDisabled(String provider) {
 
     }
-
-
 }
