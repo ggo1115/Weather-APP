@@ -154,6 +154,18 @@ public class MainActivity extends AppCompatActivity{
         });
 
     }
+    public void onClick1(View view){
+        Intent intent = new Intent(this, AreaComp.class);
+        startActivity(intent);
+    }
+    public void  onClick2(View view){
+        Intent intent = new Intent(this, SettingArea.class);
+        startActivity(intent);
+    }
+    public void onClick3(View view){
+        Intent intent = new Intent(this, Setting.class);
+        startActivity(intent);
+    }
 
 
 }

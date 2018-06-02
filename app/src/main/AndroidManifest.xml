@@ -21,6 +21,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".AreaComp"/>
+        <activity android:name=".SettingArea"/>
+        <activity android:name=".Setting"/>
     </application>
 
 </manifest>
