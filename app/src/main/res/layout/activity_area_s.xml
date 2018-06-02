@@ -8,11 +8,20 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/textView3"
+        <EditText
+            android:id="@+id/editSearch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="지역설정화면" />
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:hint="지역을 입력하세요." />
+
+        <ListView
+            android:id="@+id/listView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="#999999"
+            android:dividerHeight="1dp"/>
 
         <Button
             android:id="@+id/back"
