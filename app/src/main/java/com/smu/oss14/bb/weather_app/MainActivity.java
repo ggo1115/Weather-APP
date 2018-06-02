@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity{
                                     Double TempSens = 13.12 + (0.6215 * Double.parseDouble(WDataList.get(0).getTemp_cur())) - (11.37 * Math.pow(Double.parseDouble(WDataList.get(0).getWs()), 0.16)) + (0.3965 * Math.pow(Double.parseDouble(WDataList.get(0).getWs()), 0.16) * Double.parseDouble(WDataList.get(0).getTemp_cur()));
                                     DecimalFormat form = new DecimalFormat("#.#");
                                     TxtTSn.setText("체감\n" + form.format(TempSens)+"º");
-                                    TxtWind.setText("풍속\n" + form.format(WDataList.get(0).getWs())+"m/s");
+                                    TxtWind.setText("풍속\n" + WDataList.get(0).getWs()+"m/s");
                                     TxtReh.setText("습도\n" + WDataList.get(0).getReh()+"%");
                                     TxtPer.setText("강수\n" + WDataList.get(0).getPop()+"%");
                                 } catch (IOException e) {
