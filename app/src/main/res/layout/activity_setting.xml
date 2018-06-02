@@ -8,18 +8,17 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/textView4"
+        <ListView
+            android:id="@+id/SettingLV"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="설정 화면" />
-
+            android:layout_height="wrap_content" >
+        </ListView>
         <Button
-            android:id="@+id/back"
+            android:id="@+id/BacktoMain"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="뒤로"
-            android:layout_gravity="bottom|right"
-            android:onClick="onClick3"/>
+            android:layout_gravity="bottom|center"
+            android:text="←"/>
+
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

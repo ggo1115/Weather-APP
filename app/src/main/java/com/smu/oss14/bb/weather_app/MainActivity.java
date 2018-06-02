@@ -1,8 +1,10 @@
 package com.smu.oss14.bb.weather_app;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -24,6 +26,7 @@ import okhttp3.Response;
 public class MainActivity extends AppCompatActivity{
 
     Button BtnRe;    //위치확인버튼
+    Button BtngtSetting;
     TextView TxtLo;
     ImageView weatherImage;
     TextView TxtTpC;
@@ -34,6 +37,9 @@ public class MainActivity extends AppCompatActivity{
     TextView TxtPer;
     TextView TxtReh;
 
+    private boolean SetTempScale = true;
+    private boolean CurLocationOK = true;
+
     Location_Data LData = new Location_Data();
     ArrayList<Weatherinfo_Data> WDataList = new ArrayList<Weatherinfo_Data>();
 
@@ -42,6 +48,7 @@ public class MainActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        BtngtSetting = (Button) findViewById(R.id.setting);
         BtnRe = (Button) findViewById(R.id.Refresh);
         TxtLo = (TextView) findViewById(R.id.Location);
         TxtTpC = (TextView) findViewById(R.id.TempCur);
@@ -52,7 +59,7 @@ public class MainActivity extends AppCompatActivity{
         TxtPer = (TextView) findViewById(R.id.Per);
         TxtReh = (TextView) findViewById(R.id.Reh);
 
-        GPSActivity gpsActivity = new GPSActivity(MainActivity.this);
+        final GPSActivity gpsActivity = new GPSActivity(MainActivity.this);
         LData = gpsActivity.UseGPS();
         if(gpsActivity.usable_FINE_LOCATION) {
             //usable_FINE_LOCATION일때
@@ -100,9 +107,31 @@ public class MainActivity extends AppCompatActivity{
                 gpsActivity.SettingAlert();
             }
         }
-
-
+        BtngtSetting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), SettingActivity.class);
+                intent.putExtra("setTempScale", SetTempScale);
+                intent.putExtra("CurLocationOK", CurLocationOK);
+                startActivityForResult(intent, 1);
+            }
+        });
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == 1){
+            if(resultCode == Activity.RESULT_OK){
+                SetTempScale = data.getBooleanExtra("setTempScale", true);
+                CurLocationOK = data.getBooleanExtra("CurLocationOK", true);
+                Log.e("화씨섭씨?","선택결과 - " + SetTempScale);
+                Log.e("현재위치사용?", "선택결과 - " + CurLocationOK);
+            }
+        }
+    }
+
     public void onClick1(View view){
         Intent intent = new Intent(this, AreaComp.class);
         startActivity(intent);
@@ -111,10 +140,7 @@ public class MainActivity extends AppCompatActivity{
         Intent intent = new Intent(this, SettingArea.class);
         startActivity(intent);
     }
-    public void onClick3(View view){
-        Intent intent = new Intent(this, Setting.class);
-        startActivity(intent);
-    }
+
 
 
 }
