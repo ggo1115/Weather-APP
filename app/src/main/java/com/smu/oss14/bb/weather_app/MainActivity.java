@@ -1,59 +1,38 @@
 package com.smu.oss14.bb.weather_app;
 
-import android.Manifest;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.os.AsyncTask;
-import android.os.Build;
-import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ListView;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import org.xml.sax.SAXException;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
-import org.xmlpull.v1.XmlPullParserFactory;
-
 import java.io.IOException;
-import java.io.StringReader;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
 
-import javax.xml.parsers.ParserConfigurationException;
-
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity{
 
-    Button CheckWeather; //날씨확인버튼
-    Button CheckGPS;    //위치확인버튼
-    TextView txtLat;    //위도txt
-    TextView txtLon;    //경도txt
-    TextView txtAddr;   //주소명txt
-    TextView txtWeatherParse;   //날씨파싱정보txt
-
-    String weather_result = ""; //날씨파싱정보 담는 문자열
+    Button BtnRe;    //위치확인버튼
+    TextView TxtLo;
+    ImageView weatherImage;
+    TextView TxtTpC;
+    TextView TxtTpR;
+    TextView TxtTMM;
+    TextView TxtTSn;
+    TextView TxtWind;
+    TextView TxtPer;
+    TextView TxtReh;
 
     Location_Data LData = new Location_Data();
     ArrayList<Weatherinfo_Data> WDataList = new ArrayList<Weatherinfo_Data>();
@@ -63,95 +42,65 @@ public class MainActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        CheckWeather = (Button) findViewById(R.id.CheckAD);
-        CheckGPS = (Button) findViewById(R.id.gpsBtn);
-        txtLat = (TextView) findViewById(R.id.textlat);
-        txtLon = (TextView) findViewById(R.id.textLon);
-        txtAddr = (TextView) findViewById(R.id.textAddr);
-        txtWeatherParse = (TextView) findViewById(R.id.textView);
+        BtnRe = (Button) findViewById(R.id.Refresh);
+        TxtLo = (TextView) findViewById(R.id.Location);
+        TxtTpC = (TextView) findViewById(R.id.TempCur);
+        TxtTpR = (TextView) findViewById(R.id.TempRange);
+        TxtTMM = (TextView) findViewById(R.id.TempMM);
+        TxtTSn = (TextView) findViewById(R.id.TempSen);
+        TxtWind = (TextView) findViewById(R.id.Wind);
+        TxtPer = (TextView) findViewById(R.id.Per);
+        TxtReh = (TextView) findViewById(R.id.Reh);
 
-
-        CheckGPS.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                GPSActivity gpsActivity = new GPSActivity(MainActivity.this);
-                LData = gpsActivity.UseGPS();
-
-                if(gpsActivity.usable_FINE_LOCATION) {
-                    //usable_FINE_LOCATION일때
-
-                    if (gpsActivity.isGetlc) {
-                        //GPS가 켜져있으면
-                        //Toast.makeText(MainActivity.this, "GPS켜짐", Toast.LENGTH_SHORT).show();
-                        txtLat.setText("위도 : " + LData.getLat());
-                        txtLon.setText("경도 : " + LData.getLon());
-                        txtAddr.setText("주소 : " + LData.getAddr());
-
-                        String[] Adresult = LData.getAddrValue();
-
-                        final DatabaseReference DBR = FirebaseDatabase.getInstance().getReference().child("LocationCode").child(Adresult[0]).child(Adresult[1]);
-                        DBR.addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                LData.setLCcode(dataSnapshot.getValue(String.class));
-                                Toast.makeText(MainActivity.this, LData.getLCcode(), Toast.LENGTH_SHORT).show();
+        GPSActivity gpsActivity = new GPSActivity(MainActivity.this);
+        LData = gpsActivity.UseGPS();
+        if(gpsActivity.usable_FINE_LOCATION) {
+            //usable_FINE_LOCATION일때
+            if (gpsActivity.isGetlc) {
+                //GPS가 켜져있으면
+                String[] Adresult = LData.getAddrValue();
+                TxtLo.setText(LData.getAddr());
+                final DatabaseReference DBR = FirebaseDatabase.getInstance().getReference().child("LocationCode").child(Adresult[0]).child(Adresult[1]);
+                DBR.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        LData.setLCcode(dataSnapshot.getValue(String.class));
+                        new Thread(){
+                            public void run(){
+                                //ReceiverShortWeather를 통한 날씨파싱시도
+                                ReceiveWeather ReceiveWeather = new ReceiveWeather();
+                                //지역코드값 넘겨줘서 실행(추후 DB통해 넣을 예정)
+                                Response response = ReceiveWeather.XMLloading(LData.getLCcode());
+                                try {
+                                    WDataList = ReceiveWeather.parsing(response.body().string());
+                                    TxtTpC.setText(WDataList.get(0).getTemp_cur()+"º");
+                                    TxtTMM.setText(WDataList.get(3).getTemp_max()+"/"+WDataList.get(3).getTemp_min()+"º");
+                                    Double TempRange = Double.parseDouble( WDataList.get(3).getTemp_max())-Double.parseDouble(WDataList.get(3).getTemp_min());
+                                    TxtTpR.setText("일교차\n" + TempRange);
+                                    Double TempSens = 13.12 + (0.6215 * Double.parseDouble(WDataList.get(0).getTemp_cur())) - (11.37 * Math.pow(Double.parseDouble(WDataList.get(0).getWs()), 0.16)) + (0.3965 * Math.pow(Double.parseDouble(WDataList.get(0).getWs()), 0.16) * Double.parseDouble(WDataList.get(0).getTemp_cur()));
+                                    DecimalFormat form = new DecimalFormat("#.#");
+                                    TxtTSn.setText("체감\n" + form.format(TempSens)+"º");
+                                    TxtWind.setText("풍속\n" + form.format(WDataList.get(0).getWs())+"m/s");
+                                    TxtReh.setText("습도\n" + WDataList.get(0).getReh()+"%");
+                                    TxtPer.setText("강수\n" + WDataList.get(0).getPop()+"%");
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
                             }
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-                            }
-                        });
-
-
-                    } else {
-                        // GPS가 꺼져있을 때
-                        Toast.makeText(MainActivity.this, "GPS꺼짐", Toast.LENGTH_SHORT).show();
-                        gpsActivity.SettingAlert();
+                        }.start();
                     }
-                }
-            }
-
-
-        });
-
-        CheckWeather.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new Thread(){
-                    public void run(){
-                        //ReceiverShortWeather를 통한 날씨파싱시도
-                        ReceiveWeather ReceiveWeather = new ReceiveWeather();
-                        //지역코드값 넘겨줘서 실행(추후 DB통해 넣을 예정)
-                        Response response = ReceiveWeather.XMLloading("1159068000");
-                        try {
-                            WDataList = ReceiveWeather.parsing(response.body().string());
-                            int i= 0;
-                            while(i < WDataList.size()) {
-                                weather_result += "날짜코드 : " + WDataList.get(i).getDate() + "\n";
-                                weather_result += "시간단위 : " +WDataList.get(i).getHour() + "\n";
-                                weather_result += "현재온도 : " + WDataList.get(i).getTemp_cur() + "\n";
-                                weather_result += "최고온도 : " + WDataList.get(i).getTemp_max() + "\n";
-                                weather_result += "최저온도 : " + WDataList.get(i).getTemp_min() + "\n";
-                                weather_result += "하늘상태코드 : " + WDataList.get(i).getSky_state() + "\n";
-                                weather_result += "강수상태코드 : " + WDataList.get(i).getPty() + "\n";
-                                weather_result += "날씨상태 : " + WDataList.get(i).getWf() + "\n";
-                                weather_result += "강수확률 : " + WDataList.get(i).getPop() + "\n";
-                                weather_result += "풍속 : " + WDataList.get(i).getWs() + "\n";
-                                weather_result += "풍향 : " + WDataList.get(i).getWd() + "\n";
-                                weather_result += "습도 : " + WDataList.get(i).getReh() + "\n";
-                                weather_result += "==========================================\n";
-                                i++;
-                            }
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
                     }
-                }.start();
+                });
 
-                txtWeatherParse.setText(weather_result);
+            } else {
+                // GPS가 꺼져있을 때
+                Toast.makeText(MainActivity.this, "GPS꺼짐", Toast.LENGTH_SHORT).show();
+                gpsActivity.SettingAlert();
             }
-        });
+        }
+
 
     }
     public void onClick1(View view){

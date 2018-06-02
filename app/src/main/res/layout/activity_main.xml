@@ -7,65 +7,35 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="wrap_content"
         android:orientation="horizontal">
 
         <Button
             android:id="@+id/areaSet"
+            android:layout_toLeftOf="@+id/areaComp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="지역 설정"
+            android:text="지역 선택"
             android:onClick="onClick2"/>
 
         <Button
             android:id="@+id/areaComp"
+            android:layout_toLeftOf="@+id/setting"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:text="지역 비교"
             android:onClick="onClick1"/>
 
         <Button
             android:id="@+id/setting"
+            android:layout_alignParentRight="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:text="설정"
             android:onClick="onClick3"/>
-    </LinearLayout>
-
-    <Button
-        android:id="@+id/gpsBtn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="위치 확인" />
-
-    <TextView
-        android:id="@+id/textlat"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="위도 : " />
-
-    <TextView
-        android:id="@+id/textLon"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="경도 : " />
-
-    <TextView
-        android:id="@+id/textAddr"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="주소명 : " />
-
-    <Button
-        android:id="@+id/CheckAD"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="날씨 확인" />
+    </RelativeLayout>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -76,11 +46,127 @@
             android:layout_height="wrap_content"
             android:orientation="vertical" >
 
-            <TextView
-                android:id="@+id/textView"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="TextView" />
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/Location"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="center"
+                    android:textSize="17pt"
+                    android:text="" />
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="200dp">
+                <ImageView
+                    android:id="@+id/WeatherImage"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_width="200dp"
+                    android:layout_height="150dp"
+                    app:srcCompat="@android:color/transparent" />
+                <TextView
+                    android:id="@+id/TempCur"
+                    android:layout_toRightOf="@id/WeatherImage"
+                    android:layout_alignTop="@id/WeatherImage"
+                    android:layout_width="100dp"
+                    android:layout_height="50dp"
+                    android:text=""
+                    android:textAlignment="center"
+                    android:textSize="18pt" />
+                <TextView
+                    android:id="@+id/TempRange"
+                    android:layout_alignTop="@id/WeatherImage"
+                    android:layout_toRightOf="@id/TempCur"
+                    android:layout_width="100dp"
+                    android:layout_height="50dp"
+                    android:text=""
+                    android:textAlignment="center"
+                    android:textSize="9pt"/>
+                <TextView
+                    android:id="@+id/TempMM"
+                    android:layout_width="100dp"
+                    android:layout_height="50dp"
+                    android:layout_toRightOf="@id/WeatherImage"
+                    android:layout_below="@+id/TempCur"
+                    android:text=""
+                    android:textAlignment="center"
+                    android:textSize="9pt" />
+                <TextView
+                    android:id="@+id/TempSen"
+                    android:layout_width="100dp"
+                    android:layout_height="50dp"
+                    android:layout_below="@+id/TempCur"
+                    android:layout_toRightOf="@+id/TempMM"
+                    android:text=""
+                    android:textAlignment="center"
+                    android:textSize="8pt" />
+                <LinearLayout
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/WeatherImage"
+                    android:layout_below="@+id/TempMM">
+                    <TextView
+                        android:id="@+id/Wind"
+                        android:layout_width="60dp"
+                        android:layout_height="50dp"
+                        android:textSize="7pt"
+                        android:textAlignment="center"
+                        android:text="" />
+                    <TextView
+                        android:id="@+id/Per"
+                        android:layout_width="60dp"
+                        android:layout_height="50dp"
+                        android:textSize="7pt"
+                        android:textAlignment="center"
+                        android:text="" />
+                    <TextView
+                        android:id="@+id/Reh"
+                        android:layout_width="60dp"
+                        android:layout_height="50dp"
+                        android:textSize="7pt"
+                        android:textAlignment="center"
+                        android:text=""/>
+                </LinearLayout>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="온도비교그래프"
+                    android:textSize="30pt"
+                    android:textAlignment="center"/>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="음식추천"
+                    android:textSize="30pt"
+                    android:textAlignment="center"/>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <Button
+                    android:id="@+id/Refresh"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:text="새로고침" />
+            </RelativeLayout>
+
         </LinearLayout>
     </ScrollView>
 
