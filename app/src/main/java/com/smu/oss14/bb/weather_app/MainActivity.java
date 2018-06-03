@@ -36,11 +36,16 @@ public class MainActivity extends AppCompatActivity{
     TextView TxtWind;
     TextView TxtPer;
     TextView TxtReh;
+    TextView TxtPm10;
+    TextView TxtPm25;
 
     private boolean SetTempScale = true;
     private boolean CurLocationOK = true;
 
     Location_Data LData = new Location_Data();
+    Air_Data_PM10 Pm10Data;
+    Air_Data_PM25 Pm25Data;
+
     ArrayList<Weatherinfo_Data> WDataList = new ArrayList<Weatherinfo_Data>();
 
     @Override
@@ -58,6 +63,9 @@ public class MainActivity extends AppCompatActivity{
         TxtWind = (TextView) findViewById(R.id.Wind);
         TxtPer = (TextView) findViewById(R.id.Per);
         TxtReh = (TextView) findViewById(R.id.Reh);
+        TxtPm10 = (TextView) findViewById(R.id.AirPM10);
+        TxtPm25 = (TextView) findViewById(R.id.AirPM25);
+
 
         final GPSActivity gpsActivity = new GPSActivity(MainActivity.this);
         LData = gpsActivity.UseGPS();
@@ -76,10 +84,21 @@ public class MainActivity extends AppCompatActivity{
                             public void run(){
                                 //ReceiverShortWeather를 통한 날씨파싱시도
                                 ReceiveWeather ReceiveWeather = new ReceiveWeather();
+                                ReceiveAirPM10 ReceiveAirPm10 = new ReceiveAirPM10();
+                                ReceiveAirPM25 ReceiveAirPm25 = new ReceiveAirPM25();
+                                //ReceiveAirPm10.execute("");
+                                //ReceiveAirPm25.execute("");
+
                                 //지역코드값 넘겨줘서 실행(추후 DB통해 넣을 예정)
                                 Response response = ReceiveWeather.XMLloading(LData.getLCcode());
+                                Response response_10 = ReceiveAirPm10.XMLloading();
+                                Response response_25 = ReceiveAirPm25.XMLloading();
                                 try {
                                     WDataList = ReceiveWeather.parsing(response.body().string());
+                                    Pm10Data = ReceiveAirPm10.parsingPm10(response_10.body().string());
+                                    Pm25Data = ReceiveAirPm25.parsingPm25(response_25.body().string());
+                                    Select_Location_Air SLAir = new Select_Location_Air(LData.getAddrValue()[0], Pm10Data, Pm25Data);
+                                    String[] AirState = SLAir.ReturnAir();
                                     TxtTpC.setText(WDataList.get(0).getTemp_cur()+"º");
                                     TxtTMM.setText(WDataList.get(3).getTemp_max()+"/"+WDataList.get(3).getTemp_min()+"º");
                                     Double TempRange = Double.parseDouble( WDataList.get(3).getTemp_max())-Double.parseDouble(WDataList.get(3).getTemp_min());
@@ -90,6 +109,8 @@ public class MainActivity extends AppCompatActivity{
                                     TxtWind.setText("풍속\n" + WDataList.get(0).getWs()+"m/s");
                                     TxtReh.setText("습도\n" + WDataList.get(0).getReh()+"%");
                                     TxtPer.setText("강수\n" + WDataList.get(0).getPop()+"%");
+                                    TxtPm10.setText("(pm10) " + AirState[0]);
+                                    TxtPm25.setText("(pm25) " + AirState[1]);
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }

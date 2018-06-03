@@ -6,21 +6,31 @@
 
     <RadioGroup
         android:id="@+id/GroupTemp"
+        android:layout_marginTop="20dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content">
 
         <RadioButton
             android:id="@+id/rBtnFts"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:textSize="9pt"
+            android:layout_width="350dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:text="화씨온도(ºF)" />
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="5dp"
+            android:layout_margin="20dp"
+            android:layout_weight="1"
+            android:background="@color/colorPrimaryDark" />
 
         <RadioButton
             android:id="@+id/rBtnCts"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:textSize="9pt"
+            android:layout_width="350dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:text="섭씨온도(ºC)" />
 
     </RadioGroup>
