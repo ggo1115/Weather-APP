@@ -33,8 +33,7 @@
             android:layout_alignParentRight="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="설정"
-            android:onClick="onClick3"/>
+            android:text="설정" />
     </RelativeLayout>
 
     <ScrollView
@@ -59,9 +58,17 @@
                     android:text="" />
             </LinearLayout>
 
+            <View
+                android:id="@+id/mainDivide1"
+                android:layout_margin="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/colorPrimary" />
+
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="200dp">
+                android:layout_height="wrap_content">
                 <ImageView
                     android:id="@+id/WeatherImage"
                     android:layout_alignParentLeft="true"
@@ -72,7 +79,7 @@
                 <TextView
                     android:id="@+id/TempCur"
                     android:layout_toRightOf="@id/WeatherImage"
-                    android:layout_alignTop="@id/WeatherImage"
+                    android:layout_alignParentTop="true"
                     android:layout_width="100dp"
                     android:layout_height="50dp"
                     android:text=""
@@ -80,17 +87,19 @@
                     android:textSize="18pt" />
                 <TextView
                     android:id="@+id/TempRange"
-                    android:layout_alignTop="@id/WeatherImage"
+                    android:layout_alignParentTop="true"
                     android:layout_toRightOf="@id/TempCur"
                     android:layout_width="100dp"
                     android:layout_height="50dp"
                     android:text=""
                     android:textAlignment="center"
                     android:textSize="9pt"/>
+
                 <TextView
                     android:id="@+id/TempMM"
                     android:layout_width="100dp"
                     android:layout_height="50dp"
+                    android:layout_marginTop="2dp"
                     android:layout_toRightOf="@id/WeatherImage"
                     android:layout_below="@+id/TempCur"
                     android:text=""
@@ -100,16 +109,19 @@
                     android:id="@+id/TempSen"
                     android:layout_width="100dp"
                     android:layout_height="50dp"
+                    android:layout_marginTop="2dp"
                     android:layout_below="@+id/TempCur"
                     android:layout_toRightOf="@+id/TempMM"
                     android:text=""
                     android:textAlignment="center"
                     android:textSize="8pt" />
                 <LinearLayout
+                    android:id="@+id/layoutLinear1"
                     android:layout_width="200dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
                     android:layout_toRightOf="@id/WeatherImage"
-                    android:layout_below="@+id/TempMM">
+                    android:layout_below="@+id/TempSen">
                     <TextView
                         android:id="@+id/Wind"
                         android:layout_width="60dp"
@@ -132,7 +144,38 @@
                         android:textAlignment="center"
                         android:text=""/>
                 </LinearLayout>
+
+                <TextView
+                    android:id="@+id/AirPM10"
+                    android:layout_below="@+id/layoutLinear1"
+                    android:layout_toRightOf="@+id/WeatherImage"
+                    android:layout_marginTop="2dp"
+                    android:layout_width="100dp"
+                    android:layout_height="50dp"
+                    android:textSize="7pt"
+                    android:textAlignment="center"
+                    android:text=""
+                    />
+                <TextView
+                    android:id="@+id/AirPM25"
+                    android:layout_below="@+id/layoutLinear1"
+                    android:layout_toRightOf="@+id/AirPM10"
+                    android:layout_marginTop="2dp"
+                    android:layout_width="100dp"
+                    android:layout_height="50dp"
+                    android:textSize="7pt"
+                    android:textAlignment="center"
+                    android:text=""
+                    />
             </RelativeLayout>
+
+            <View
+                android:id="@+id/mainDivide5"
+                android:layout_margin="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/colorPrimary" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -144,6 +187,14 @@
                     android:textSize="30pt"
                     android:textAlignment="center"/>
             </RelativeLayout>
+
+            <View
+                android:id="@+id/mainDivide6"
+                android:layout_margin="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/colorPrimary" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
