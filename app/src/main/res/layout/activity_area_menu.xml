@@ -12,20 +12,20 @@
 
         <Button
             android:id="@+id/BtnbackMain"
-            android:layout_width="46dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="←" />
         <Button
             android:id="@+id/BtnAddList"
-            android:layout_width="46dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="+" />
 
         <Button
             android:id="@+id/BtnDelList"
-            android:layout_width="46dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ㅡ" />
+            android:text="편집" />
 
     </LinearLayout>
 
@@ -34,6 +34,7 @@
         android:layout_height="wrap_content">
 
         <ListView
+            android:id="@+id/SetAreaList"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"></ListView>
 
