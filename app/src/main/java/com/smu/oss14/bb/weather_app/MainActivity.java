@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity{
 
     Button BtnRe;    //위치확인버튼
     Button BtngtSetting;
+    Button BtnAreaSetting;
     TextView TxtLo;
     ImageView weatherImage;
     TextView TxtTpC, TxtTpR, TxtTMM, TxtTSn, TxtWind, TxtPer, TxtReh, TxtPm10, TxtPm25;
@@ -57,6 +58,7 @@ public class MainActivity extends AppCompatActivity{
         setContentView(R.layout.activity_main);
 
         BtngtSetting = (Button) findViewById(R.id.setting);
+        BtnAreaSetting = (Button) findViewById(R.id.areaSet);
         BtnRe = (Button) findViewById(R.id.Refresh);
         TxtLo = (TextView) findViewById(R.id.Location);
         TxtTpC = (TextView) findViewById(R.id.TempCur);
@@ -70,10 +72,7 @@ public class MainActivity extends AppCompatActivity{
         TxtPm25 = (TextView) findViewById(R.id.AirPM25);
         weatherImage = (ImageView) findViewById(R.id.WeatherImage);
 
-        //curTime = System.currentTimeMillis();
-        //curDate = new Date(curTime);
-        //Log.e("오늘날짜", dateFormat.format(curDate));
-
+        //날짜
         GregorianCalendar today = new GregorianCalendar();
         GregorianCalendar yesterday = new GregorianCalendar();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
@@ -191,6 +190,14 @@ public class MainActivity extends AppCompatActivity{
                 startActivityForResult(intent, 1);
             }
         });
+
+        BtnAreaSetting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), SettingAreaMenu.class);
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -232,10 +239,6 @@ public class MainActivity extends AppCompatActivity{
 
     public void onClick1(View view){
         Intent intent = new Intent(this, AreaComp.class);
-        startActivity(intent);
-    }
-    public void  onClick2(View view){
-        Intent intent = new Intent(this, SettingArea.class);
         startActivity(intent);
     }
 
