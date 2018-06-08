@@ -39,6 +39,7 @@ public class GPSActivity extends Service implements LocationListener
     private String[] AddrValue;                                     //지역값_배역
     private String Addr;                                            //지역 주소 값 담음 (.)단위로 끊어서
     private String LCode;                                           //지역코드
+    private int count_GPSset = 0;
 
     private static final long MINIMUM_DIS = 10;                    //최소 GPS 업데이트 거리 : 10미터
     private static final long MINIMUM_TIME = 60000;                //최소 GPS 업데이트 시간 : 1분(60000ms)
@@ -145,12 +146,15 @@ public class GPSActivity extends Service implements LocationListener
                     }
 
                     /* 3. 역지오코딩 */
-                    geocoder = new Geocoder(activity);
-                    reverseGeocoding();
-                    Location_data.setAddrValue(new String[]{AddrValue[1],AddrValue[2]});
-                    Location_data.setAddr(Addr);
-                    Log.e("Addr", Addr);
-                    Log.e("AddrValue", AddrValue[1]+AddrValue[2]);
+
+                    if(isGetlc) {
+                        geocoder = new Geocoder(activity);
+                        reverseGeocoding();
+                        Location_data.setAddrValue(new String[]{AddrValue[1], AddrValue[2]});
+                        Location_data.setAddr(Addr);
+                        Log.e("Addr", Addr);
+                        Log.e("AddrValue", AddrValue[1] + AddrValue[2]);
+                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -172,19 +176,13 @@ public class GPSActivity extends Service implements LocationListener
        AlertDialog.Builder alDialog = new AlertDialog.Builder(activity);
 
        alDialog.setTitle("GPS 확인")
-               .setMessage("GPS가 켜져있지 않음.\n 설정으로 이동")
-               .setPositiveButton("이동", new DialogInterface.OnClickListener() {
+               .setMessage("GPS가 켜져있지 않습니다.\nGPS를 키고 이용하여 주십시오.")
+               .setPositiveButton("확인", new DialogInterface.OnClickListener() {
                    @Override
                    public void onClick(DialogInterface dialog, int which) {
-                       Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                       activity.startActivity(intent);
+                       activity.finish();
                    }
-               }).setNegativeButton("취소", new DialogInterface.OnClickListener() {
-           @Override
-           public void onClick(DialogInterface dialog, int which) {
-               dialog.cancel();
-           }
-       }).show();
+               }).show();
     }
 
     // GPS를 통해 얻어온 위도, 경도 값으로 주소값 받아오는 method

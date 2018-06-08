@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -9,22 +10,365 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        tools:ignore="MissingConstraints"
         tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="0dp"
-        tools:ignore="MissingConstraints">
-
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="지역비교화면" />
+        tools:layout_editor_absoluteY="209dp">
 
         <Button
-            android:id="@+id/back"
+            android:id="@+id/BtnSelTA"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|right"
-            android:onClick="onClick1"
-            android:text="뒤로" />
+            android:layout_gravity="right"
+            android:text="지역선택" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginTop="20dp">
+
+                <RelativeLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/Lo1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textAlignment="center"
+                        android:textSize="13pt" />
+
+                    <TextView
+                        android:id="@+id/CurLo1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/Lo1"
+                        android:layout_marginLeft="7dp"
+                        android:layout_marginTop="5dp"
+                        android:text="현재"
+                        android:textSize="8pt" />
+
+                    <ImageView
+                        android:id="@+id/CuriconLo1"
+                        android:layout_width="match_parent"
+                        android:layout_height="190dp"
+                        android:layout_below="@id/CurLo1"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="5dp"
+                        app:srcCompat="@android:color/transparent" />
+
+                    <TextView
+                        android:id="@+id/CurWeatherLo1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/CuriconLo1"
+                        android:layout_marginBottom="5dp"
+                        android:layout_marginTop="10dp"
+                        android:text=""
+                        android:textAlignment="center"
+                        android:textSize="10pt" />
+
+                    <TextView
+                        android:id="@+id/CurTempLo1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/CurWeatherLo1"
+                        android:layout_marginBottom="5dp"
+                        android:text=""
+                        android:textAlignment="center"
+                        android:textSize="10pt" />
+
+                    <View
+                        android:id="@+id/CompDivide1_Lo1"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_below="@id/CurTempLo1"
+                        android:layout_margin="5dp"
+                        android:layout_marginTop="2dp"
+                        android:background="#c1c1c1" />
+
+                    <TextView
+                        android:id="@+id/Today_Lo1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/CompDivide1_Lo1"
+                        android:layout_marginLeft="10dp"
+                        android:text="오늘"
+                        android:textSize="8pt" />
+
+                    <ImageView
+                        android:id="@+id/TodayiconLo1"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:layout_below="@id/Today_Lo1"
+                        android:layout_marginTop="5dp"
+                        app:srcCompat="@android:color/transparent" />
+
+                    <TextView
+                        android:id="@+id/TodayMM_Lo1"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/Today_Lo1"
+                        android:layout_marginTop="12dp"
+                        android:layout_toRightOf="@id/TodayiconLo1"
+                        android:text=""
+                        android:textSize="6pt" />
+
+                    <TextView
+                        android:id="@+id/TodayPop_Lo1"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/TodayMM_Lo1"
+                        android:layout_toRightOf="@id/TodayiconLo1"
+                        android:text=""
+                        android:textSize="6pt" />
+
+                    <TextView
+                        android:id="@+id/TodayWind_Lo1"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/TodayPop_Lo1"
+                        android:layout_toRightOf="@id/TodayiconLo1"
+                        android:text=""
+                        android:textSize="6pt" />
+
+                    <View
+                        android:id="@+id/CompDivide2_Lo1"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_below="@id/TodayiconLo1"
+                        android:layout_margin="5dp"
+                        android:layout_marginTop="2dp"
+                        android:background="#c1c1c1" />
+
+                    <TextView
+                        android:id="@+id/Tomorrow_Lo1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/CompDivide2_Lo1"
+                        android:layout_marginLeft="10dp"
+                        android:text="내일"
+                        android:textSize="8pt" />
+
+                    <ImageView
+                        android:id="@+id/TomoriconLo1"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:layout_below="@id/Tomorrow_Lo1"
+                        android:layout_marginTop="5dp"
+                        app:srcCompat="@android:color/transparent" />
+
+                    <TextView
+                        android:id="@+id/TomorMM_Lo1"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/Tomorrow_Lo1"
+                        android:layout_marginTop="12dp"
+                        android:layout_toRightOf="@id/TomoriconLo1"
+                        android:text=""
+                        android:textSize="6pt" />
+
+                    <TextView
+                        android:id="@+id/TomorPop_Lo1"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/TomorMM_Lo1"
+                        android:layout_toRightOf="@id/TomoriconLo1"
+                        android:text=""
+                        android:textSize="6pt" />
+
+                    <TextView
+                        android:id="@+id/TomorWind_Lo1"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/TomorPop_Lo1"
+                        android:layout_toRightOf="@id/TomoriconLo1"
+                        android:text=""
+                        android:textSize="6pt" />
+
+
+                </RelativeLayout>
+
+                <View
+                    android:id="@+id/divider5"
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="#e0e0e0" />
+
+                <RelativeLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="1">
+
+
+                    <TextView
+                        android:id="@+id/Lo2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textAlignment="center"
+                        android:textSize="13pt" />
+
+                    <TextView
+                        android:id="@+id/CurLo2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/Lo2"
+                        android:layout_marginLeft="7dp"
+                        android:layout_marginTop="5dp"
+                        android:text="현재"
+                        android:textSize="8pt" />
+
+                    <ImageView
+                        android:id="@+id/CuriconLo2"
+                        android:layout_width="match_parent"
+                        android:layout_height="190dp"
+                        android:layout_below="@id/CurLo2"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="5dp"
+                        app:srcCompat="@android:color/transparent" />
+
+                    <TextView
+                        android:id="@+id/CurWeatherLo2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/CuriconLo2"
+                        android:layout_marginBottom="5dp"
+                        android:layout_marginTop="10dp"
+                        android:text=""
+                        android:textAlignment="center"
+                        android:textSize="10pt" />
+
+                    <TextView
+                        android:id="@+id/CurTempLo2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/CurWeatherLo2"
+                        android:layout_marginBottom="5dp"
+                        android:text=""
+                        android:textAlignment="center"
+                        android:textSize="10pt" />
+
+                    <View
+                        android:id="@+id/CompDivide1_Lo2"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_below="@id/CurTempLo2"
+                        android:layout_margin="5dp"
+                        android:layout_marginTop="2dp"
+                        android:background="#c1c1c1" />
+
+                    <TextView
+                        android:id="@+id/Today_Lo2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/CompDivide1_Lo2"
+                        android:layout_marginLeft="10dp"
+                        android:text="오늘"
+                        android:textSize="8pt" />
+
+                    <ImageView
+                        android:id="@+id/TodayiconLo2"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:layout_below="@id/Today_Lo2"
+                        android:layout_marginTop="5dp"
+                        app:srcCompat="@android:color/transparent" />
+
+                    <TextView
+                        android:id="@+id/TodayMM_Lo2"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/Today_Lo2"
+                        android:layout_marginTop="12dp"
+                        android:layout_toRightOf="@id/TodayiconLo2"
+                        android:text=""
+                        android:textSize="6pt" />
+
+                    <TextView
+                        android:id="@+id/TodayPop_Lo2"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/TodayMM_Lo2"
+                        android:layout_toRightOf="@id/TodayiconLo2"
+                        android:text=""
+                        android:textSize="6pt" />
+
+                    <TextView
+                        android:id="@+id/TodayWind_Lo2"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/TodayPop_Lo2"
+                        android:layout_toRightOf="@id/TodayiconLo2"
+                        android:text=""
+                        android:textSize="6pt" />
+
+                    <View
+                        android:id="@+id/CompDivide2_Lo2"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_below="@id/TodayiconLo2"
+                        android:layout_margin="5dp"
+                        android:layout_marginTop="2dp"
+                        android:background="#c1c1c1" />
+
+                    <TextView
+                        android:id="@+id/Tomorrow_Lo2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/CompDivide2_Lo2"
+                        android:layout_marginLeft="10dp"
+                        android:text="내일"
+                        android:textSize="8pt" />
+
+                    <ImageView
+                        android:id="@+id/TomoriconLo2"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:layout_below="@id/Tomorrow_Lo2"
+                        android:layout_marginTop="5dp"
+                        app:srcCompat="@android:color/transparent" />
+
+                    <TextView
+                        android:id="@+id/TomorMM_Lo2"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/Tomorrow_Lo2"
+                        android:layout_marginTop="12dp"
+                        android:layout_toRightOf="@id/TomoriconLo2"
+                        android:text=""
+                        android:textSize="6pt" />
+
+                    <TextView
+                        android:id="@+id/TomorPop_Lo2"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/TomorMM_Lo2"
+                        android:layout_toRightOf="@id/TomoriconLo2"
+                        android:text=""
+                        android:textSize="6pt" />
+
+                    <TextView
+                        android:id="@+id/TomorWind_Lo2"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/TomorPop_Lo2"
+                        android:layout_toRightOf="@id/TomoriconLo2"
+                        android:text=""
+                        android:textSize="6pt" />
+
+
+                </RelativeLayout>
+            </LinearLayout>
+
+
+        </ScrollView>
+
     </LinearLayout>
+
 </android.support.constraint.ConstraintLayout>

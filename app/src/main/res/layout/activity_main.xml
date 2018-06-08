@@ -17,16 +17,14 @@
             android:layout_toLeftOf="@+id/areaComp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="지역 선택"
-            android:onClick="onClick2"/>
+            android:text="지역 선택"/>
 
         <Button
             android:id="@+id/areaComp"
             android:layout_toLeftOf="@+id/setting"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="지역 비교"
-            android:onClick="onClick1"/>
+            android:text="지역 비교"/>
 
         <Button
             android:id="@+id/setting"
