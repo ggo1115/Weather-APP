@@ -41,6 +41,11 @@ public class MainActivity extends AppCompatActivity{
 
     private boolean SetTempScale = true;
     private boolean CurLocationOK = true;
+    boolean isSelectCurLocation = true;
+    boolean isSelect = false;
+    String[] BookMark;
+    String selectArea;
+
 
     Location_Data LData = new Location_Data();
     Air_Data_PM10 Pm10Data;
@@ -71,6 +76,12 @@ public class MainActivity extends AppCompatActivity{
         TxtPm25 = (TextView) findViewById(R.id.AirPM25);
         weatherImage = (ImageView) findViewById(R.id.WeatherImage);
 
+        if(CurLocationOK){
+            BookMark = new String[]{"현재위치"};
+        }else{
+            BookMark = new String[]{};
+        }
+
         //날짜
         GregorianCalendar today = new GregorianCalendar();
         GregorianCalendar yesterday = new GregorianCalendar();
@@ -96,7 +107,11 @@ public class MainActivity extends AppCompatActivity{
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), SettingAreaMenu.class);
-                startActivity(intent);
+                intent.putExtra("SelectArea",LData.getAddr());
+                intent.putExtra("CurLocationOK", CurLocationOK);
+                intent.putExtra("isSelectCurLocation", isSelectCurLocation);
+                intent.putExtra("BookmarkList",BookMark);
+                startActivityForResult(intent, 1030);
             }
         });
         BtnAreaComp.setOnClickListener(new View.OnClickListener() {
@@ -235,6 +250,22 @@ public class MainActivity extends AppCompatActivity{
                 CurLocationOK = data.getBooleanExtra("CurLocationOK", true);
                 Log.e("화씨섭씨?","선택결과 - " + SetTempScale);
                 Log.e("현재위치사용?", "선택결과 - " + CurLocationOK);
+            }
+        }
+
+        else if(requestCode == 1030){
+            if(resultCode == Activity.RESULT_OK) {
+                BookMark = data.getStringArrayExtra("BookmarkList");
+                isSelect = data.getBooleanExtra("isSelect", false);
+                isSelectCurLocation = data.getBooleanExtra("isSelectCurLocation", false);
+                selectArea = data.getStringExtra("selected");
+
+                for (int i = 0 ; i < BookMark.length ; i++){
+                    Log.e((i+1)+"번째 지역", BookMark[i]);
+                }
+                Log.e("isSelect" , "=" + isSelect);
+                Log.e("isSelectCurLocation", "="+isSelectCurLocation);
+                Log.e("selectArea", selectArea);
             }
         }
     }
