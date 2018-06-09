@@ -81,7 +81,7 @@ public class SettingAreaMenu extends Activity {
                 }
                 selectArea = true;
 
-                if(items.get(position).equals("현재 위치")){
+                if(items.get(position).equals("현재위치")){
                     selectGPS = true;
                 }else{
                     selectGPS = false;
