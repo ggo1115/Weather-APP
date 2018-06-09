@@ -30,6 +30,7 @@ public class SettingAreaMenu extends Activity {
     boolean selectGPS = false;
     boolean gpsOn = true;
     boolean additem = false;
+    boolean DeleteMode = false;
 
     String Location1;
     String selectLocation;
@@ -75,30 +76,37 @@ public class SettingAreaMenu extends Activity {
         ListAreaSet.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String[] Bookmark = new String[items.size()];
-                for(int i = 0 ; i < items.size() ; i++){
-                    Bookmark[i] = items.get(i);
-                }
-                selectArea = true;
 
-                if(items.get(position).equals("현재위치")){
-                    selectGPS = true;
+                if(!DeleteMode) {
+                    String[] Bookmark = new String[items.size()];
+                    for (int i = 0; i < items.size(); i++) {
+                        Bookmark[i] = items.get(i);
+                    }
+                    selectArea = true;
+
+                    if (items.get(position).equals("현재위치")) {
+                        selectGPS = true;
+                    } else {
+                        selectGPS = false;
+                    }
+                    Intent selectIntent = new Intent();
+                    selectIntent.putExtra("BookmarkList", Bookmark);
+                    selectIntent.putExtra("isSelect", selectArea);
+                    selectIntent.putExtra("isSelectCurLocation", selectGPS);
+                    selectIntent.putExtra("selected", items.get(position));
+                    setResult(Activity.RESULT_OK, selectIntent);
+                    finish();
                 }else{
-                    selectGPS = false;
+                    Toast.makeText(getApplicationContext(), "정보" + position, Toast.LENGTH_SHORT).show();
                 }
-                Intent selectIntent = new Intent();
-                selectIntent.putExtra("BookmarkList", Bookmark);
-                selectIntent.putExtra("isSelect", selectArea);
-                selectIntent.putExtra("isSelectCurLocation", selectGPS);
-                selectIntent.putExtra("selected", items.get(position));
-                setResult(Activity.RESULT_OK, selectIntent);
-                finish();
             }
         });
 
         BtnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                //Log.e("check", "=" + ListAreaSet.getCheckedItemPosition());
                 String[] Bookmark = new String[items.size()];
                 for(int i = 0 ; i < items.size() ; i++){
                     Bookmark[i] = items.get(i);
@@ -118,7 +126,7 @@ public class SettingAreaMenu extends Activity {
         BtnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                DeleteMode = true;
             }
         });
 
