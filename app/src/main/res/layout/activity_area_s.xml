@@ -1,34 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        tools:layout_editor_absoluteX="229dp"
+        tools:layout_editor_absoluteY="62dp">
 
-        <EditText
-            android:id="@+id/editSearch"
+        <LinearLayout
+            android:id="@+id/Layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="textPersonName"
-            android:hint="지역을 입력하세요." />
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/editSearch"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ems="10"
+                android:hint="지역을 입력하세요."
+                android:inputType="textPersonName" />
+
+            <Button
+                android:id="@+id/BtnOk_SA"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="확인" />
+            <Button
+                android:id="@+id/BtnBack_SA"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="뒤로" />
+
+        </LinearLayout>
+
+
 
         <ListView
             android:id="@+id/listView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_below="@id/Layout"
             android:divider="#999999"
-            android:dividerHeight="1dp"/>
+            android:dividerHeight="1dp" />
 
-        <Button
-            android:id="@+id/back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="뒤로"
-            android:layout_gravity="bottom|right"
-            android:onClick="onClick2"/>
-    </LinearLayout>
-</android.support.constraint.ConstraintLayout>
+
+    </RelativeLayout>
+</LinearLayout>
