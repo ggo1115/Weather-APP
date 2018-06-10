@@ -55,9 +55,16 @@ public class SettingAreaMenu extends Activity {
 
         items = new ArrayList<String>();
 
-        for(int i = 0 ; i < BookMark.length ; i++){
-            items.add(BookMark[i]);
+        if(gpsOn == true){
+            for(int i = 0 ; i < BookMark.length ; i++){
+                items.add(BookMark[i]);
+            }
+        }else {
+            for (int i = 1; i < BookMark.length; i++) {
+                items.add(BookMark[i]);
+            }
         }
+
         /*if(gpsOn){
             items.add("현재 위치");
         }*/
@@ -173,7 +180,7 @@ public class SettingAreaMenu extends Activity {
                     }
                 }
             });
-            
+
         }
 
     }
