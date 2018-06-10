@@ -1,0 +1,54 @@
+<html>
+<head>
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <script type="text/javascript">
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
+
+      function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+
+         ['Year', 'Yesterday', 'Today'],
+          ['최저기온',      10,       11.1],
+          ['최고기온',   28.7,      31.6],
+          ['체감온도',      28,        32],
+          ['일교차',       18.7,      20.5]
+        ]);
+
+        var classicOptions = {
+        title: '어제와 오늘의 날씨 비교 그래프',
+        width: 900,
+        height: 600,
+        // Gives each series an axis that matches the vAxes number below.
+        series: {
+          0: {targetAxisIndex: 0},
+          1: {targetAxisIndex: 1}
+        },
+        vAxes: {
+          // Adds titles to each axis.
+          0: {title: 'Temps (Celsius)'},
+          1: {title: 'Daylight'}
+        },
+        hAxis: {
+          ticks: [new Date(2014, 0), new Date(2014, 1), new Date(2014, 2), new Date(2014, 3),
+                  new Date(2014, 4),  new Date(2014, 5), new Date(2014, 6), new Date(2014, 7),
+                  new Date(2014, 8), new Date(2014, 9), new Date(2014, 10), new Date(2014, 11)
+                 ]
+        },
+        vAxis: {
+          viewWindow: {
+            max: 45
+          }
+        }
+      };
+
+        var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+
+        chart.draw(data, classicOptions);
+      }
+    </script>
+</head>
+<body>
+<div id="curve_chart" style="width: 900px; height: 600px"></div>
+</body>
+</html>

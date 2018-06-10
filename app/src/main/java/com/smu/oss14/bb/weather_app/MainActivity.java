@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -14,8 +15,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,7 +30,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -37,11 +44,15 @@ import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity{
 
+    public static final String ASSET_PATH = "file:///android_asset/";
+
     Button BtnRe;    //위치확인버튼
     Button BtngtSetting, BtnAreaSetting, BtnAreaComp;
     TextView TxtLo;
     ImageView weatherImage;
     TextView TxtTpC, TxtTpR, TxtTMM, TxtTSn, TxtWind, TxtPer, TxtReh, TxtPm10, TxtPm25;
+    ProgressBar progressBar;
+    WebView webView;
 
     private boolean SetTempScale = true;//화씨섭씨설정
     private int SetTempScale_int = 1;
@@ -101,12 +112,13 @@ public class MainActivity extends AppCompatActivity{
         TxtPm10 = (TextView) findViewById(R.id.AirPM10);
         TxtPm25 = (TextView) findViewById(R.id.AirPM25);
         weatherImage = (ImageView) findViewById(R.id.WeatherImage);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        webView = (WebView) findViewById(R.id.category_web_view);
 
         Log.e("pref", "="+preferences.getBoolean("isFirstRun", true));
 
         myDBHelper = new DBHelper(this);
         checkFirst();
-
 
         //날짜
         GregorianCalendar today = new GregorianCalendar();
@@ -153,8 +165,34 @@ public class MainActivity extends AppCompatActivity{
                 startActivity(intent);
             }
         });
-    }
 
+        WebSettings webSettings = webView.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+        webSettings.setBuiltInZoomControls(true);
+        webView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
+        webView.setWebViewClient(new WebViewClient() {
+
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                view.loadUrl(url);
+                loadChart();
+                return true;
+            };
+
+            @Override
+            public void onPageStarted(WebView view, String url, android.graphics.Bitmap favicon) {
+                super.onPageStarted(view, url, favicon);
+                progressBar.setVisibility(View.VISIBLE);
+            };
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                progressBar.setVisibility(View.INVISIBLE);
+            };
+        });
+        webView.loadUrl("file:///android_asset/Dual-Y.html");
+    }
 
     @Override
     protected void onResume() {
@@ -187,7 +225,6 @@ public class MainActivity extends AppCompatActivity{
 
         }
     }
-
 
     @Override
     public void onBackPressed() {
@@ -421,4 +458,29 @@ public class MainActivity extends AppCompatActivity{
         }
     }
 
+    private void loadChart() {
+
+        String content = null;
+        try {
+            AssetManager assetManager = getAssets();
+            InputStream in = assetManager.open("Dual-Y.html");
+            byte[] bytes = readFully(in);
+            content = new String(bytes, "UTF-8");
+        } catch (IOException e) {
+        }
+
+        String formattedContent = String.format(content);
+        webView.loadDataWithBaseURL(ASSET_PATH, formattedContent, "text/html", "utf-8", null);
+        webView.requestFocusFromTouch();
+    }
+
+    private static byte[] readFully(InputStream in) throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024];
+        for (int count; (count = in.read(buffer)) != -1;) {
+            out.write(buffer, 0, count);
+        }
+
+        return out.toByteArray();
+    }
 }
