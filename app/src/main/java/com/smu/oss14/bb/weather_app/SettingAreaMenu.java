@@ -154,7 +154,13 @@ public class SettingAreaMenu extends Activity {
                     if(count > 0){
                         checked = listView.getCheckedItemPosition();
 
-                        if(checked > -1 && checked < count){
+                        if(checked == 0 ){
+                            Toast.makeText(getApplicationContext(),  "'" + items.get(checked) +"' 는 삭제할 수 없습니다.", Toast.LENGTH_SHORT).show();
+                            listView.clearChoices();
+                            adapter.notifyDataSetChanged();
+                            DeleteMode = false;
+                        }
+                        if(checked > 0 && checked < count){
 
                             Toast.makeText(getApplicationContext(),  "'" + items.get(checked) +"' 을(를) 삭제했습니다.", Toast.LENGTH_SHORT).show();
                             items.remove(checked);
@@ -163,14 +169,12 @@ public class SettingAreaMenu extends Activity {
 
                             DeleteMode = false;
                         }
+
                     }
                 }
             });
-
-
-
+            
         }
-
 
     }
 
