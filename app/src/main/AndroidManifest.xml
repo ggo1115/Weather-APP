@@ -28,6 +28,8 @@
         <activity android:name=".SettingCurLocation"/>
         <activity android:name=".SettingAreaMenu"/>
         <activity android:name=".Select_ForComp"/>
+        <activity android:name=".SettingAlarm"/>
+
     </application>
 
 </manifest>

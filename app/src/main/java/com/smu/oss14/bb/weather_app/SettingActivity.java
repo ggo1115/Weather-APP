@@ -16,6 +16,11 @@ public class SettingActivity extends Activity {
     Button btnBack;
     boolean setTempScale;
     boolean setCurLocation;
+    boolean isSetAlarm;
+    String SetAlarmWay;
+    String[] SetAlarmContent;
+    int AlarmHour;
+    int AlarmMinute;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +38,11 @@ public class SettingActivity extends Activity {
         Intent mainIntent = getIntent();
         setTempScale = mainIntent.getBooleanExtra("setTempScale", true);
         setCurLocation = mainIntent.getBooleanExtra("CurLocationOK", true);
+        isSetAlarm = mainIntent.getBooleanExtra("isSetAlarm", true);
+        SetAlarmWay = mainIntent.getStringExtra("SetAlarmWay");
+        SetAlarmContent = mainIntent.getStringArrayExtra("SetAlarmContent");
+        AlarmHour = mainIntent.getIntExtra("AlarmHour", 7);
+        AlarmMinute = mainIntent.getIntExtra("AlarmMinute", 0);
 
         setlist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -44,6 +54,13 @@ public class SettingActivity extends Activity {
                         startActivityForResult(intent_tmp, 2);
                         break;
                     case 1:
+                        Intent intent_alarm = new Intent(getApplicationContext(), SettingAlarm.class);
+                        intent_alarm.putExtra("isSetAlarm", isSetAlarm);
+                        intent_alarm.putExtra("SetAlarmWay", SetAlarmWay);
+                        intent_alarm.putExtra("SetAlarmContent", SetAlarmContent);
+                        intent_alarm.putExtra("AlarmHour", AlarmHour);
+                        intent_alarm.putExtra("AlarmMinute", AlarmMinute);
+                        startActivityForResult(intent_alarm, 1040);
                         break;
                     case 2:
                         Intent intent_cur = new Intent(getApplicationContext(), SettingCurLocation.class);
@@ -60,6 +77,11 @@ public class SettingActivity extends Activity {
                 Intent backMain = new Intent();
                 backMain.putExtra("setTempScale", setTempScale);
                 backMain.putExtra("CurLocationOK", setCurLocation);
+                backMain.putExtra("isSetAlarm", isSetAlarm);
+                backMain.putExtra("SetAlarmWay", SetAlarmWay);
+                backMain.putExtra("SetAlarmContent", SetAlarmContent);
+                backMain.putExtra("AlarmHour", AlarmHour);
+                backMain.putExtra("AlarmMinute", AlarmMinute);
                 setResult(Activity.RESULT_OK, backMain);
                 finish();
             }
@@ -80,6 +102,16 @@ public class SettingActivity extends Activity {
             if(resultCode == Activity.RESULT_OK){
                 setCurLocation = data.getBooleanExtra("CurLocationOK", true);
                 Log.e("현재위치정보사용", "result : " + setCurLocation);
+            }
+        }
+
+        if(requestCode == 1040){
+            if(resultCode == Activity.RESULT_OK){
+                isSetAlarm = data.getBooleanExtra("isSetAlarm", true);
+                SetAlarmWay = data.getStringExtra("SetAlarmWay");
+                SetAlarmContent = data.getStringArrayExtra("SetAlarmContent");
+                AlarmHour = data.getIntExtra("AlarmHour", 7);
+                AlarmMinute = data.getIntExtra("AlarmMinute", 0);
             }
         }
     }

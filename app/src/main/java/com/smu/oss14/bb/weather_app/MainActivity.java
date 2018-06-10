@@ -3,6 +3,10 @@ package com.smu.oss14.bb.weather_app;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.location.LocationManager;
 import android.os.Handler;
 import android.os.Message;
@@ -39,12 +43,29 @@ public class MainActivity extends AppCompatActivity{
     ImageView weatherImage;
     TextView TxtTpC, TxtTpR, TxtTMM, TxtTSn, TxtWind, TxtPer, TxtReh, TxtPm10, TxtPm25;
 
-    private boolean SetTempScale = true;
-    private boolean CurLocationOK = true;
-    boolean isSelectCurLocation = true;
-    boolean isSelect = false;
-    String[] BookMark;
-    String selectArea;
+    private boolean SetTempScale = true;//화씨섭씨설정
+    private int SetTempScale_int = 1;
+    private boolean CurLocationOK = true;//현재위치정보제공허용여부
+    private int CurLocationOK_int = 1;
+    boolean isSelectCurLocation = true;//현재위치날씨선택여부
+    private int isSelectCurLocation_int = 1;
+    boolean isSelect = false;//지역선택여부
+    private int isSelect_int = 0;
+    String[] BookMark = new String[]{"현재위치"};//즐겨찾기목록
+    private String BookMark_String = "";
+    String selectArea = "현재위치";//선택한지역주소
+    private boolean isSetAlarm = true;//알림설정여부
+    private int isSetAlarm_int = 1;
+    private String SetAlarmWay = "소리"; //알림방법
+    private String[] SetAlarmContent = {"비/눈", "미세먼지", "일교차"};//알림내용
+    private String SetAlarmContent_String = "";
+    private int AlarmHour = 7;//알림설정시간(시)
+    private int AlarmMinute = 0;//알림설정시간(분)
+
+    private int i = 0;
+    private long time = 0;
+
+    public SharedPreferences preferences;
 
     Location_Data LData = new Location_Data();
     Air_Data_PM10 Pm10Data;
@@ -54,10 +75,16 @@ public class MainActivity extends AppCompatActivity{
 
     Handler handler;
 
+    DBHelper myDBHelper;
+
+    SQLiteDatabase sqlDB;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        preferences = getSharedPreferences("Pref", MODE_PRIVATE);
 
         BtngtSetting = (Button) findViewById(R.id.setting);
         BtnAreaSetting = (Button) findViewById(R.id.areaSet);
@@ -75,11 +102,11 @@ public class MainActivity extends AppCompatActivity{
         TxtPm25 = (TextView) findViewById(R.id.AirPM25);
         weatherImage = (ImageView) findViewById(R.id.WeatherImage);
 
-        if(CurLocationOK){
-            BookMark = new String[]{"현재위치"};
-        }else{
-            BookMark = new String[]{};
-        }
+        Log.e("pref", "="+preferences.getBoolean("isFirstRun", true));
+
+        myDBHelper = new DBHelper(this);
+        checkFirst();
+
 
         //날짜
         GregorianCalendar today = new GregorianCalendar();
@@ -98,6 +125,11 @@ public class MainActivity extends AppCompatActivity{
                 Intent intent = new Intent(getApplicationContext(), SettingActivity.class);
                 intent.putExtra("setTempScale", SetTempScale);
                 intent.putExtra("CurLocationOK", CurLocationOK);
+                intent.putExtra("isSetAlarm", isSetAlarm);
+                intent.putExtra("SetAlarmWay", SetAlarmWay);
+                intent.putExtra("SetAlarmContent", SetAlarmContent);
+                intent.putExtra("AlarmHour", AlarmHour);
+                intent.putExtra("AlarmMinute", AlarmMinute);
                 startActivityForResult(intent, 1);
             }
         });
@@ -130,7 +162,7 @@ public class MainActivity extends AppCompatActivity{
 
         handler = new Handler();
 
-        if(isSelectCurLocation) {
+        if(selectArea.equals("현재위치")) {
             final GPSActivity gpsActivity = new GPSActivity(MainActivity.this);
             LData = gpsActivity.UseGPS();
             if (gpsActivity.usable_FINE_LOCATION) {
@@ -157,6 +189,53 @@ public class MainActivity extends AppCompatActivity{
     }
 
 
+    @Override
+    public void onBackPressed() {
+        if(System.currentTimeMillis() - time >= 1500){
+            time = System.currentTimeMillis();
+            Toast.makeText(getApplicationContext(), "뒤로 버튼을 한 번 더 누르면 종료합니다.", Toast.LENGTH_SHORT).show();
+            if(SetTempScale) SetTempScale_int = 1;
+            else SetTempScale_int = 0;
+            if(CurLocationOK) CurLocationOK_int = 1;
+            else CurLocationOK_int = 0;
+            if(isSelectCurLocation) isSelectCurLocation_int = 1;
+            else isSelectCurLocation_int = 0;
+            if(isSelect) isSelect_int = 1;
+            else isSelect_int = 0;
+            BookMark_String = "";
+            for(i = 0 ; i < BookMark.length - 1 ; i++){
+                BookMark_String += BookMark[i] + ",";
+            }
+            BookMark_String += BookMark[i];
+            if(isSetAlarm) isSetAlarm_int = 1;
+            else isSetAlarm_int = 0;
+            SetAlarmContent_String = "";
+            for(i = 0 ; i < SetAlarmContent.length - 1; i++){
+                SetAlarmContent_String += SetAlarmContent[i] + ",";
+            }
+            SetAlarmContent_String += SetAlarmContent[i];
+
+            sqlDB = myDBHelper.getWritableDatabase();
+            sqlDB.execSQL("DELETE FROM SettingDataTBL WHERE TvNum = 1");
+            sqlDB.execSQL("INSERT INTO SettingDataTBL VALUES( 1," + SetTempScale_int + "," + CurLocationOK_int + "," + isSelectCurLocation_int + "," + isSelect_int + ",'" + BookMark_String + "','" + selectArea + "'," + isSetAlarm_int + ",'" + SetAlarmWay + "','" + SetAlarmContent_String + "'," + AlarmHour + "," + AlarmMinute + ");");
+            sqlDB.close();
+
+            Log.e("SetTempScale", "=" + SetTempScale);
+            Log.e("CurLocationOk","="+CurLocationOK);
+            Log.e("isSelectCurLocation","="+isSelectCurLocation);
+            Log.e("isSelect", "="+isSelect);
+            Log.e("BookMark","="+BookMark_String);
+            Log.e("selectArea", "="+selectArea);
+            Log.e("isSetAlarm", "="+isSetAlarm);
+            Log.e("AlarmWay", "="+SetAlarmWay);
+            Log.e("AlarmContent","="+SetAlarmContent_String);
+            Log.e("AlarmHour/AlarmMinute", AlarmHour+"시"+AlarmMinute+"분");
+
+        }else if(System.currentTimeMillis() - time < 1500){
+            finish();
+        }
+    }
+
     public void SetWeather(String[] Adresult){
         final DatabaseReference DBR = FirebaseDatabase.getInstance().getReference().child("LocationCode").child(Adresult[0]).child(Adresult[1]);
         DBR.addValueEventListener(new ValueEventListener() {
@@ -167,17 +246,17 @@ public class MainActivity extends AppCompatActivity{
                     public void run() {
                         //ReceiverShortWeather를 통한 날씨파싱시도
                         ReceiveWeather ReceiveWeather = new ReceiveWeather();
-                        ReceiveAirPM10 ReceiveAirPm10 = new ReceiveAirPM10();
-                        ReceiveAirPM25 ReceiveAirPm25 = new ReceiveAirPM25();
+                        //ReceiveAirPM10 ReceiveAirPm10 = new ReceiveAirPM10();
+                        //ReceiveAirPM25 ReceiveAirPm25 = new ReceiveAirPM25();
 
                         //지역코드값 넘겨줘서 실행(추후 DB통해 넣을 예정)
                         Response response = ReceiveWeather.XMLloading(LData.getLCcode());
-                        Response response_10 = ReceiveAirPm10.XMLloading();
-                        Response response_25 = ReceiveAirPm25.XMLloading();
+                        //Response response_10 = ReceiveAirPm10.XMLloading();
+                        //Response response_25 = ReceiveAirPm25.XMLloading();
                         try {
                             WDataList = ReceiveWeather.parsing(response.body().string());
-                            Pm10Data = ReceiveAirPm10.parsingPm10(response_10.body().string());
-                            Pm25Data = ReceiveAirPm25.parsingPm25(response_25.body().string());
+                            //Pm10Data = ReceiveAirPm10.parsingPm10(response_10.body().string());
+                            //Pm25Data = ReceiveAirPm25.parsingPm25(response_25.body().string());
                             Double TempRange = Double.parseDouble(WDataList.get(3).getTemp_max()) - Double.parseDouble(WDataList.get(3).getTemp_min());
                             Double TempSens = 13.12 + (0.6215 * Double.parseDouble(WDataList.get(0).getTemp_cur())) - (11.37 * Math.pow(Double.parseDouble(WDataList.get(0).getWs()), 0.16)) + (0.3965 * Math.pow(Double.parseDouble(WDataList.get(0).getWs()), 0.16) * Double.parseDouble(WDataList.get(0).getTemp_cur()));
                             Double TempCur = Double.parseDouble(WDataList.get(0).getTemp_cur());
@@ -191,8 +270,8 @@ public class MainActivity extends AppCompatActivity{
                                 TempSens = (TempSens * 1.8) + 32;
                             }
                             DecimalFormat form = new DecimalFormat("#.#");
-                            Select_Location_Air SLAir = new Select_Location_Air(LData.getAddrValue()[0], Pm10Data, Pm25Data);
-                            String[] AirState = SLAir.ReturnAir();
+                            //Select_Location_Air SLAir = new Select_Location_Air(LData.getAddrValue()[0], Pm10Data, Pm25Data);
+                            //String[] AirState = SLAir.ReturnAir();
 
                             TxtTpC.setText(TempCur + "º");
                             TxtTMM.setText(TempMax + "/" + TempMin + "º");
@@ -201,8 +280,8 @@ public class MainActivity extends AppCompatActivity{
                             TxtWind.setText("풍속\n" + WDataList.get(1).getWs() + "m/s");
                             TxtReh.setText("습도\n" + WDataList.get(0).getReh() + "%");
                             TxtPer.setText("강수\n" + WDataList.get(0).getPop() + "%");
-                            TxtPm10.setText("(pm10) " + AirState[0]);
-                            TxtPm25.setText("(pm25) " + AirState[1]);
+                            //TxtPm10.setText("(pm10) " + AirState[0]);
+                            //TxtPm25.setText("(pm25) " + AirState[1]);
 
                             handler.post(new Runnable() {
                                 @Override
@@ -247,6 +326,57 @@ public class MainActivity extends AppCompatActivity{
         });
     }
 
+    public void checkFirst(){
+        boolean isFirst = preferences.getBoolean("isFirstRun", true);
+        if(isFirst){
+            sqlDB = myDBHelper.getWritableDatabase();
+            myDBHelper.onCreate(sqlDB);
+            sqlDB.close();
+            preferences.edit().putBoolean("isFirstRun", false).apply();
+        }else{
+            sqlDB = myDBHelper.getReadableDatabase();
+            Cursor cursor;
+            cursor = sqlDB.rawQuery("SELECT * FROM SettingDataTBL WHERE TvNum = 1;", null);
+            while(cursor.moveToNext()){
+                SetTempScale_int = cursor.getInt(1);
+                if(SetTempScale_int == 1) SetTempScale = true;
+                else if(SetTempScale_int == 0) SetTempScale = false;
+                CurLocationOK_int = cursor.getInt(2);
+                if(CurLocationOK_int == 1)CurLocationOK = true;
+                else if(CurLocationOK_int == 0) CurLocationOK = false;
+                isSelectCurLocation_int = cursor.getInt(3);
+                if(isSelectCurLocation_int == 1) isSelectCurLocation = true;
+                else if(isSelectCurLocation_int == 0) isSelectCurLocation = false;
+                isSelect_int = cursor.getInt(4);
+                if(isSelect_int == 1) isSelect = true;
+                else if(isSelect_int == 0) isSelect = false;
+                BookMark_String = cursor.getString(5);
+                BookMark = BookMark_String.split(",");
+                selectArea = cursor.getString(6);
+                isSetAlarm_int = cursor.getInt(7);
+                if(isSetAlarm_int == 1) isSetAlarm = true;
+                else if(isSetAlarm_int == 0) isSetAlarm = false;
+                SetAlarmWay = cursor.getString(8);
+                SetAlarmContent_String = cursor.getString(9);
+                SetAlarmContent = SetAlarmContent_String.split(",");
+                AlarmHour = cursor.getInt(10);
+                AlarmMinute = cursor.getInt(11);
+                Log.e("SetTempScale", "=" + SetTempScale);
+                Log.e("CurLocationOk","="+CurLocationOK);
+                Log.e("isSelectCurLocation","="+isSelectCurLocation);
+                Log.e("isSelect", "="+isSelect);
+                Log.e("BookMark","="+BookMark_String);
+                Log.e("selectArea", "="+selectArea);
+                Log.e("isSetAlarm", "="+isSetAlarm);
+                Log.e("AlarmWay", "="+SetAlarmWay);
+                Log.e("AlarmContent","="+SetAlarmContent_String);
+                Log.e("AlarmHour/AlarmMinute", AlarmHour+"시"+AlarmMinute+"분");
+            }
+            cursor.close();
+            sqlDB.close();
+        }
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -255,6 +385,11 @@ public class MainActivity extends AppCompatActivity{
             if(resultCode == Activity.RESULT_OK){
                 SetTempScale = data.getBooleanExtra("setTempScale", true);
                 CurLocationOK = data.getBooleanExtra("CurLocationOK", true);
+                isSetAlarm = data.getBooleanExtra("isSetAlarm", true);
+                SetAlarmWay = data.getStringExtra("SetAlarmWay");
+                SetAlarmContent = data.getStringArrayExtra("SetAlarmContent");
+                AlarmHour = data.getIntExtra("AlarmHour", 7);
+                AlarmMinute = data.getIntExtra("AlarmMinute", 0);
             }
         }
 
@@ -265,6 +400,24 @@ public class MainActivity extends AppCompatActivity{
                 isSelectCurLocation = data.getBooleanExtra("isSelectCurLocation", false);
                 selectArea = data.getStringExtra("selected");
             }
+        }
+    }
+
+    public class DBHelper extends SQLiteOpenHelper{
+        public DBHelper(Context context){
+            super(context, "Settingdb", null, 1);
+        }
+
+        @Override
+        public void onCreate(SQLiteDatabase db) {
+            db.execSQL("DROP TABLE IF EXISTS SettingDataTBL");
+            db.execSQL("CREATE TABLE SettingDataTBL ( TvNum INTEGER PRIMARY KEY, TempScale INTEGER, CurLoAccept INTEGER, isSelCur INTEGER, isSelAREA INTEGER, BookMark VARCHAR(1000), SelectAreaLocation VARCHAR(50), isSetAlarm INTEGER, alarmWay VARCHAR(30), alarmContent VARCHAR(50), alarmHour INTEGER, alarmMinute INTEGER);");
+        }
+
+        @Override
+        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+            db.execSQL("DROP TABLE IF EXISTS SettingDataTBL");
+            onCreate(db);
         }
     }
 
