@@ -62,8 +62,13 @@ public class SettingAreaMenu extends Activity {
             items.add("현재 위치");
         }*/
 
-        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,items);
+        if(!DeleteMode){
+            adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, items);
+        }
         ListAreaSet.setAdapter(adapter);
+
+
+
 
         BtnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,9 +101,10 @@ public class SettingAreaMenu extends Activity {
                     selectIntent.putExtra("selected", items.get(position));
                     setResult(Activity.RESULT_OK, selectIntent);
                     finish();
-                }else{
+                }/*else{
                     Toast.makeText(getApplicationContext(), "정보" + position, Toast.LENGTH_SHORT).show();
-                }
+
+                }*/
             }
         });
 
@@ -129,6 +135,42 @@ public class SettingAreaMenu extends Activity {
                 DeleteMode = true;
             }
         });
+
+        if (!DeleteMode){
+            adapter = new ArrayAdapter<String>(SettingAreaMenu.this, android.R.layout.simple_list_item_single_choice,items);
+
+            final ListView listView = (ListView)findViewById(R.id.SetAreaList);
+            listView.setAdapter(adapter);
+            listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+
+            Button deleteButton = (Button)findViewById(R.id.Delete);
+            deleteButton.setOnClickListener(new Button.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+
+                    int count, checked;
+                    count = adapter.getCount();
+
+                    if(count > 0){
+                        checked = listView.getCheckedItemPosition();
+
+                        if(checked > -1 && checked < count){
+
+                            Toast.makeText(getApplicationContext(),  "'" + items.get(checked) +"' 을(를) 삭제했습니다.", Toast.LENGTH_SHORT).show();
+                            items.remove(checked);
+                            listView.clearChoices();
+                            adapter.notifyDataSetChanged();
+
+                            DeleteMode = false;
+                        }
+                    }
+                }
+            });
+
+
+
+        }
+
 
     }
 
