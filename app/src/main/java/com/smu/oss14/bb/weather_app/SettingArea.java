@@ -115,7 +115,7 @@ public class SettingArea extends Activity {
         adapter.notifyDataSetChanged();
     }
 
-    //검색에 사용될 데이터를 리스트에 추가.(일단은 임의로 추가했음..나중에 지역으로)
+    //검색에 사용될 데이터를 리스트에 추가
     private void settingList() {
         list.add("강원도 강릉시");    list.add("강원도 고성군");    list.add("강원도 동해시");    list.add("강원도 삼척시");    list.add("강원도 속초시");    list.add("강원도 양구군");
         list.add("강원도 양양군");    list.add("강원도 영월군");    list.add("강원도 원주시");    list.add("강원도 인제군");    list.add("강원도 정선군");    list.add("강원도 철원군");

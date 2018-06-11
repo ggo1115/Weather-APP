@@ -82,6 +82,8 @@ public class MainActivity extends AppCompatActivity{
     Air_Data_PM10 Pm10Data;
     Air_Data_PM25 Pm25Data;
 
+    ReadNWriteinDBforTemp RnWTemp;
+
     ArrayList<Weatherinfo_Data> WDataList = new ArrayList<Weatherinfo_Data>();
 
     Handler handler;
@@ -120,15 +122,8 @@ public class MainActivity extends AppCompatActivity{
         myDBHelper = new DBHelper(this);
         checkFirst();
 
-        //날짜
-        GregorianCalendar today = new GregorianCalendar();
-        GregorianCalendar yesterday = new GregorianCalendar();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
-        yesterday.add(Calendar.DAY_OF_MONTH, -1);
-        String tday = dateFormat.format(today.getTime());
-        String yester = dateFormat.format(yesterday.getTime());
-
-        Log.e("어제/오늘", yester + " / " + tday);
+        RnWTemp = new ReadNWriteinDBforTemp();
+        RnWTemp.ReadDB();
 
 
         BtngtSetting.setOnClickListener(new View.OnClickListener() {
