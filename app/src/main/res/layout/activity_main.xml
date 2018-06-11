@@ -204,12 +204,23 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+
                 <TextView
-                    android:layout_width="match_parent"
+                    android:id="@+id/foodTxt"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="음식추천"
-                    android:textSize="30pt"
-                    android:textAlignment="center"/>
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginLeft="10dp"
+                    android:text="오늘의 추천음식은?"
+                    android:textAlignment="center"
+                    android:textSize="9pt" />
+                <ImageView
+                    android:id="@+id/foodImg"
+                    android:layout_below="@id/foodTxt"
+                    android:layout_width="400dp"
+                    android:layout_margin="10dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_height="370dp" />
             </RelativeLayout>
 
             <RelativeLayout

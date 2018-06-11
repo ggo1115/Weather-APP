@@ -23,7 +23,7 @@ public class ReadNWriteinDBforTemp {
 
     FirebaseDatabase db = FirebaseDatabase.getInstance();
     DatabaseReference LoCdRef = db.getReference("LocationCode");
-    DatabaseReference TempRef = db.getReference("Test");
+    DatabaseReference TempRef = db.getReference("TempData");
 
     ArrayList<Weatherinfo_Data> WD = new ArrayList<Weatherinfo_Data>();
 

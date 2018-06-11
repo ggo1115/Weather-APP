@@ -24,11 +24,15 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -53,6 +57,7 @@ public class MainActivity extends AppCompatActivity{
     TextView TxtTpC, TxtTpR, TxtTMM, TxtTSn, TxtWind, TxtPer, TxtReh, TxtPm10, TxtPm25;
     ProgressBar progressBar;
     WebView webView;
+    ImageView foodImg;
 
     private boolean SetTempScale = true;//화씨섭씨설정
     private int SetTempScale_int = 1;
@@ -116,14 +121,15 @@ public class MainActivity extends AppCompatActivity{
         weatherImage = (ImageView) findViewById(R.id.WeatherImage);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         webView = (WebView) findViewById(R.id.category_web_view);
+        foodImg = (ImageView) findViewById(R.id.foodImg);
 
         Log.e("pref", "="+preferences.getBoolean("isFirstRun", true));
 
         myDBHelper = new DBHelper(this);
         checkFirst();
 
-        RnWTemp = new ReadNWriteinDBforTemp();
-        RnWTemp.ReadDB();
+        //RnWTemp = new ReadNWriteinDBforTemp();
+        //RnWTemp.ReadDB();
 
 
         BtngtSetting.setOnClickListener(new View.OnClickListener() {
@@ -160,6 +166,12 @@ public class MainActivity extends AppCompatActivity{
                 startActivity(intent);
             }
         });
+        BtnRe.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onResume();
+            }
+        });
 
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
@@ -194,6 +206,8 @@ public class MainActivity extends AppCompatActivity{
         super.onResume();
 
         handler = new Handler();
+
+        setfoodImage();
 
         if(selectArea.equals("현재위치")) {
             final GPSActivity gpsActivity = new GPSActivity(MainActivity.this);
@@ -407,6 +421,44 @@ public class MainActivity extends AppCompatActivity{
             cursor.close();
             sqlDB.close();
         }
+    }
+
+    public void setfoodImage(){
+        String[] summer = {"/summer/bingsu.jpg" ,"/summer/cold-champon.jpg" ,"/summer/coldbeansoupnoodle.jpg", "/summer/icecream.jpg" ,"/summer/naengmyeon.jpg",
+                "/summer/samgyetang.jpg", "/summer/watermelon.jpg", "/summer/yeolmuguksu.jpg","/anytime/beer.jpg" ,"/anytime/bibimguksu.jpg", "/anytime/bossam.jpg",
+                "/anytime/broiledeels.jpg", "/anytime/buckwheatnoodles.jpg","/anytime/chicken.jpg","/anytime/chickenfoot.jpg","/anytime/corn.png","/anytime/fruitSmoothie.jpg"
+                ,"/anytime/gamjatang.jpg","/anytime/haemulpajeon.jpg","/anytime/haemultang.jpg","/anytime/jjolmyeon.jpg","/anytime/muksabal.jpg","/anytime/noodlesoup.jpg"
+                ,"/anytime/pigsfeet.jpg","/anytime/smokedDuck.jpg","/anytime/sushi.jpg","/anytime/tiramisu.jpg","/anytime/udon.jpg"};
+        String[] winter = {"/winter/beansproutandricesoup.jpg","/anytime/beer.jpg" ,"/anytime/bibimguksu.jpg", "/anytime/bossam.jpg",
+                "/anytime/broiledeels.jpg", "/anytime/buckwheatnoodles.jpg","/anytime/chicken.jpg","/anytime/chickenfoot.jpg","/anytime/corn.png","/anytime/fruitSmoothie.jpg"
+                ,"/anytime/gamjatang.jpg","/anytime/haemulpajeon.jpg","/anytime/haemultang.jpg","/anytime/jjolmyeon.jpg","/anytime/muksabal.jpg","/anytime/noodlesoup.jpg"
+                ,"/anytime/pigsfeet.jpg","/anytime/smokedDuck.jpg","/anytime/sushi.jpg","/anytime/tiramisu.jpg","/anytime/udon.jpg"};
+        String[] anytime = {"/anytime/beer.jpg" ,"/anytime/bibimguksu.jpg", "/anytime/bossam.jpg", "/anytime/broiledeels.jpg", "/anytime/buckwheatnoodles.jpg","/anytime/chicken.jpg",
+                "/anytime/chickenfoot.jpg","/anytime/corn.png","/anytime/fruitSmoothie.jpg","/anytime/gamjatang.jpg","/anytime/haemulpajeon.jpg","/anytime/haemultang.jpg","/anytime/jjolmyeon.jpg","/anytime/muksabal.jpg"
+                ,"/anytime/noodlesoup.jpg","/anytime/pigsfeet.jpg","/anytime/smokedDuck.jpg","/anytime/sushi.jpg","/anytime/tiramisu.jpg","/anytime/udon.jpg"};
+
+        FirebaseStorage fireStorage = FirebaseStorage.getInstance();
+        StorageReference reference;
+        String ImageUrl = "Foodphoto";
+
+        GregorianCalendar Cur_Month = new GregorianCalendar();
+        SimpleDateFormat format = new SimpleDateFormat("MM");
+        String month = format.format(Cur_Month.getTime());
+
+        if(month.equals("01") || month.equals("02") || month.equals("12")){
+            int num = (int)(Math.random() * 10000) % 21;
+            ImageUrl += winter[num];
+        }else if(month.equals("06") || month.equals("07") || month.equals("08") || month.equals("09")){
+            int num = (int)(Math.random() * 10000) % 28;
+            ImageUrl += summer[num];
+        }else if(month.equals("03") || month.equals("04") || month.equals("05") || month.equals("10") || month.equals("11")){
+            int num = (int)(Math.random() * 10000) % 20;
+            ImageUrl += anytime[num];
+        }
+
+        reference = fireStorage.getReference().child(ImageUrl);
+        Glide.with(getApplicationContext()).load(reference).into(foodImg);
+
     }
 
     @Override
