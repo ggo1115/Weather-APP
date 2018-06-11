@@ -23,7 +23,7 @@ public class ReadNWriteinDBforTemp {
 
     FirebaseDatabase db = FirebaseDatabase.getInstance();
     DatabaseReference LoCdRef = db.getReference("LocationCode");
-    DatabaseReference TempRef = db.getReference("TempData");
+    DatabaseReference TempRef = db.getReference("Test");
 
     ArrayList<Weatherinfo_Data> WD = new ArrayList<Weatherinfo_Data>();
 
@@ -31,10 +31,14 @@ public class ReadNWriteinDBforTemp {
     GregorianCalendar today = new GregorianCalendar();
     GregorianCalendar yesterday = new GregorianCalendar();
     GregorianCalendar tommorow = new GregorianCalendar();
+    GregorianCalendar nowtime = new GregorianCalendar();
     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
-    String tday, yester,tommor;
+    SimpleDateFormat timeFormat = new SimpleDateFormat("hh");
+    String tday, yester,tommor, time;
+
 
     int count;
+    boolean isOKTime;
 
     public ReadNWriteinDBforTemp(){
         yesterday.add(Calendar.DAY_OF_MONTH, -1);
@@ -42,6 +46,7 @@ public class ReadNWriteinDBforTemp {
         tday = dateFormat.format(today.getTime());
         yester = dateFormat.format(yesterday.getTime());
         tommor = dateFormat.format(tommorow.getTime());
+        time = timeFormat.format(nowtime.getTime());
         count = 0;
         Log.e("어제/오늘/내일", yester + " / " + tday + " / " + tommor);
     }
@@ -89,7 +94,13 @@ public class ReadNWriteinDBforTemp {
 
             }
         });
-        if(count == 0) {
+        Log.e("time", "-" + Integer.parseInt(time));
+        if(Integer.parseInt(time) >= 23 || Integer.parseInt(time) < 2 ){
+            isOKTime = false;
+        }else{
+            isOKTime = true;
+        }
+        if(count == 0 && isOKTime) {
             new Thread() {
                 public void run() {
                     //ReceiverShortWeather를 통한 날씨파싱시도

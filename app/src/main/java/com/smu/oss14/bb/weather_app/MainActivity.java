@@ -128,8 +128,8 @@ public class MainActivity extends AppCompatActivity{
         myDBHelper = new DBHelper(this);
         checkFirst();
 
-        //RnWTemp = new ReadNWriteinDBforTemp();
-        //RnWTemp.ReadDB();
+        RnWTemp = new ReadNWriteinDBforTemp();
+        RnWTemp.ReadDB();
 
 
         BtngtSetting.setOnClickListener(new View.OnClickListener() {
