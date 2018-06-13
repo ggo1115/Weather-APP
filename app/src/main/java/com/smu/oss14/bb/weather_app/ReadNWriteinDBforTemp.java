@@ -49,6 +49,13 @@ public class ReadNWriteinDBforTemp {
         time = timeFormat.format(nowtime.getTime());
         count = 0;
         Log.e("어제/오늘/내일", yester + " / " + tday + " / " + tommor);
+
+        Log.e("time", "-" + Integer.parseInt(time));
+        if(Integer.parseInt(time) >= 23 || Integer.parseInt(time) < 2 ){
+            isOKTime = false;
+        }else{
+            isOKTime = true;
+        }
     }
     public void ReadDB(){
         LoCdRef.addValueEventListener(new ValueEventListener() {
@@ -94,12 +101,6 @@ public class ReadNWriteinDBforTemp {
 
             }
         });
-        Log.e("time", "-" + Integer.parseInt(time));
-        if(Integer.parseInt(time) >= 23 || Integer.parseInt(time) < 2 ){
-            isOKTime = false;
-        }else{
-            isOKTime = true;
-        }
         if(count == 0 && isOKTime) {
             new Thread() {
                 public void run() {

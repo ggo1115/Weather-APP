@@ -8,11 +8,15 @@
       function drawChart() {
         var data = google.visualization.arrayToDataTable([
 
-         ['Year', 'Yesterday', 'Today'],
-          ['최저기온',      10,       11.1],
-          ['최고기온',   28.7,      31.6],
-          ['체감온도',      28,        32],
-          ['일교차',       18.7,      20.5]
+         ['Time', 'Yesterday', 'Today'],
+          ['3시',      10,       15],
+          ['6시',      20,       25],
+          ['9시',      30,       35],
+          ['12시',     25,       15],
+          ['15시',     25,       15],
+          ['18시',     25,       15],
+          ['21시',     25,       15],
+          ['24시',     25,       15],
         ]);
 
         var classicOptions = {
@@ -26,8 +30,7 @@
         },
         vAxes: {
           // Adds titles to each axis.
-          0: {title: 'Temps (Celsius)'},
-          1: {title: 'Daylight'}
+          0: {title: 'Temps (Celsius)'}
         },
         hAxis: {
           ticks: [new Date(2014, 0), new Date(2014, 1), new Date(2014, 2), new Date(2014, 3),

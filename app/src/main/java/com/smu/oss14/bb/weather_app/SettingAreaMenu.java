@@ -51,7 +51,7 @@ public class SettingAreaMenu extends Activity {
         selectLocation = Mainintent.getStringExtra("SelectArea");
         gpsOn = Mainintent.getBooleanExtra("CurLocationOK", true);
         selectGPS = Mainintent.getBooleanExtra("isSelectCurLocation",true);
-        String[] BookMark = Mainintent.getStringArrayExtra("BookmarkList");
+        final String[] BookMark = Mainintent.getStringArrayExtra("BookmarkList");
 
         items = new ArrayList<String>();
 
@@ -90,9 +90,19 @@ public class SettingAreaMenu extends Activity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 if(!DeleteMode) {
-                    String[] Bookmark = new String[items.size()];
-                    for (int i = 0; i < items.size(); i++) {
-                        Bookmark[i] = items.get(i);
+                    String[] Bookmark;
+                    //Log.e("check", "=" + ListAreaSet.getCheckedItemPosition());
+                    if(!gpsOn){
+                        Bookmark = new String[items.size()+1];
+                        BookMark[0] = "현재위치";
+                        for(int i = 0 ; i < items.size() ; i++){
+                            BookMark[i+1] = items.get(i);
+                        }
+                    }else {
+                        Bookmark = new String[items.size()];
+                        for (int i = 0; i < items.size(); i++) {
+                            Bookmark[i] = items.get(i);
+                        }
                     }
                     selectArea = true;
 
@@ -119,10 +129,19 @@ public class SettingAreaMenu extends Activity {
             @Override
             public void onClick(View v) {
 
+                String[] Bookmark;
                 //Log.e("check", "=" + ListAreaSet.getCheckedItemPosition());
-                String[] Bookmark = new String[items.size()];
-                for(int i = 0 ; i < items.size() ; i++){
-                    Bookmark[i] = items.get(i);
+                if(!gpsOn){
+                    Bookmark = new String[items.size()+1];
+                    BookMark[0] = "현재위치";
+                    for(int i = 0 ; i < items.size() ; i++){
+                        BookMark[i+1] = items.get(i);
+                    }
+                }else {
+                    Bookmark = new String[items.size()];
+                    for (int i = 0; i < items.size(); i++) {
+                        Bookmark[i] = items.get(i);
+                    }
                 }
                 selectArea = false;
                 Intent selectIntent = new Intent();
@@ -188,10 +207,7 @@ public class SettingAreaMenu extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-
-        for(int i = 0; i < items.size() ; i++){
-            Log.e("items("+i+")", items.get(i));
-        }
+        
 
         if(additem){
             adapter.notifyDataSetChanged();

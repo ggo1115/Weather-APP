@@ -326,8 +326,8 @@ public class MainActivity extends AppCompatActivity{
                             TxtWind.setText("풍속\n" + WDataList.get(1).getWs() + "m/s");
                             TxtReh.setText("습도\n" + WDataList.get(0).getReh() + "%");
                             TxtPer.setText("강수\n" + WDataList.get(0).getPop() + "%");
-                            //TxtPm10.setText("(pm10) " + AirState[0]);
-                            //TxtPm25.setText("(pm25) " + AirState[1]);
+                            //TxtPm10.setText("미세먼지 " + AirState[0]);
+                            //TxtPm25.setText("초미세먼지 " + AirState[1]);
 
                             handler.post(new Runnable() {
                                 @Override
