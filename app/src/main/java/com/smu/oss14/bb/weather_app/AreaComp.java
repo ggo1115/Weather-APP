@@ -398,8 +398,6 @@ public class AreaComp extends Activity{
                 Area1_Second = data.getStringExtra("SelectArea2");
                 Area2_First = data.getStringExtra("SelectArea3");
                 Area2_Second = data.getStringExtra("SelectArea4");
-
-                Toast.makeText(getApplicationContext(), Area1_First+Area1_Second+" "+Area2_First+Area2_Second, Toast.LENGTH_SHORT).show();
             }
         }
     }

@@ -99,6 +99,21 @@ public class SettingAlarm extends Activity {
         }
 
 
+        if(setAlarm.isChecked()){
+            alarmWay.setVisibility(View.VISIBLE);alarmContent.setVisibility(View.VISIBLE);alarmTime.setVisibility(View.VISIBLE);
+            divide1.setVisibility(View.VISIBLE);divide2.setVisibility(View.VISIBLE);divide3.setVisibility(View.VISIBLE);divide4.setVisibility(View.VISIBLE);divide5.setVisibility(View.VISIBLE);divide6.setVisibility(View.VISIBLE);divide7.setVisibility(View.VISIBLE);divide8.setVisibility(View.VISIBLE);divide9.setVisibility(View.VISIBLE);divide10.setVisibility(View.VISIBLE);
+            sound.setVisibility(View.VISIBLE);vibe.setVisibility(View.VISIBLE);nomode.setVisibility(View.VISIBLE);
+            CKRain.setVisibility(View.VISIBLE);CKPM.setVisibility(View.VISIBLE);CKTPR.setVisibility(View.VISIBLE);
+            timePicker.setVisibility(View.VISIBLE);
+        }else{
+            alarmWay.setVisibility(View.INVISIBLE);alarmContent.setVisibility(View.INVISIBLE);alarmTime.setVisibility(View.INVISIBLE);
+            divide1.setVisibility(View.INVISIBLE);divide2.setVisibility(View.INVISIBLE);divide3.setVisibility(View.INVISIBLE);divide4.setVisibility(View.INVISIBLE);divide5.setVisibility(View.INVISIBLE);divide6.setVisibility(View.INVISIBLE);divide7.setVisibility(View.INVISIBLE);divide8.setVisibility(View.INVISIBLE);divide9.setVisibility(View.INVISIBLE);divide10.setVisibility(View.INVISIBLE);
+            sound.setVisibility(View.INVISIBLE);vibe.setVisibility(View.INVISIBLE);nomode.setVisibility(View.INVISIBLE);
+            CKRain.setVisibility(View.INVISIBLE);CKPM.setVisibility(View.INVISIBLE);CKTPR.setVisibility(View.INVISIBLE);
+            timePicker.setVisibility(View.INVISIBLE);
+        }
+
+
         setAlarm.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
