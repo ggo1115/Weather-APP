@@ -282,7 +282,7 @@ public class MainActivity extends AppCompatActivity{
         }
     }
 
-    public void SetWeather(String[] Adresult){
+    public void SetWeather(final String[] Adresult){
         final DatabaseReference DBR = FirebaseDatabase.getInstance().getReference().child("LocationCode").child(Adresult[0]).child(Adresult[1]);
         DBR.addValueEventListener(new ValueEventListener() {
             @Override
@@ -292,17 +292,17 @@ public class MainActivity extends AppCompatActivity{
                     public void run() {
                         //ReceiverShortWeather를 통한 날씨파싱시도
                         ReceiveWeather ReceiveWeather = new ReceiveWeather();
-                        //ReceiveAirPM10 ReceiveAirPm10 = new ReceiveAirPM10();
-                        //ReceiveAirPM25 ReceiveAirPm25 = new ReceiveAirPM25();
+                        ReceiveAirPM10 ReceiveAirPm10 = new ReceiveAirPM10();
+                        ReceiveAirPM25 ReceiveAirPm25 = new ReceiveAirPM25();
 
                         //지역코드값 넘겨줘서 실행(추후 DB통해 넣을 예정)
                         Response response = ReceiveWeather.XMLloading(LData.getLCcode());
-                        //Response response_10 = ReceiveAirPm10.XMLloading();
-                        //Response response_25 = ReceiveAirPm25.XMLloading();
+                        Response response_10 = ReceiveAirPm10.XMLloading();
+                        Response response_25 = ReceiveAirPm25.XMLloading();
                         try {
                             WDataList = ReceiveWeather.parsing(response.body().string());
-                            //Pm10Data = ReceiveAirPm10.parsingPm10(response_10.body().string());
-                            //Pm25Data = ReceiveAirPm25.parsingPm25(response_25.body().string());
+                            Pm10Data = ReceiveAirPm10.parsingPm10(response_10.body().string());
+                            Pm25Data = ReceiveAirPm25.parsingPm25(response_25.body().string());
                             Double TempRange = Double.parseDouble(WDataList.get(3).getTemp_max()) - Double.parseDouble(WDataList.get(3).getTemp_min());
                             Double TempSens = 13.12 + (0.6215 * Double.parseDouble(WDataList.get(0).getTemp_cur())) - (11.37 * Math.pow(Double.parseDouble(WDataList.get(0).getWs()), 0.16)) + (0.3965 * Math.pow(Double.parseDouble(WDataList.get(0).getWs()), 0.16) * Double.parseDouble(WDataList.get(0).getTemp_cur()));
                             Double TempCur = Double.parseDouble(WDataList.get(0).getTemp_cur());
@@ -316,8 +316,8 @@ public class MainActivity extends AppCompatActivity{
                                 TempSens = (TempSens * 1.8) + 32;
                             }
                             DecimalFormat form = new DecimalFormat("#.#");
-                            //Select_Location_Air SLAir = new Select_Location_Air(LData.getAddrValue()[0], Pm10Data, Pm25Data);
-                            //String[] AirState = SLAir.ReturnAir();
+                            Select_Location_Air SLAir = new Select_Location_Air(Adresult[0], Pm10Data, Pm25Data);
+                            String[] AirState = SLAir.ReturnAir();
 
                             TxtTpC.setText(TempCur + "º");
                             TxtTMM.setText(TempMax + "/" + TempMin + "º");
@@ -326,8 +326,8 @@ public class MainActivity extends AppCompatActivity{
                             TxtWind.setText("풍속\n" + WDataList.get(1).getWs() + "m/s");
                             TxtReh.setText("습도\n" + WDataList.get(0).getReh() + "%");
                             TxtPer.setText("강수\n" + WDataList.get(0).getPop() + "%");
-                            //TxtPm10.setText("미세먼지 " + AirState[0]);
-                            //TxtPm25.setText("초미세먼지 " + AirState[1]);
+                            TxtPm10.setText("미세먼지 " + AirState[0]);
+                            TxtPm25.setText("초미세먼지 " + AirState[1]);
 
                             handler.post(new Runnable() {
                                 @Override

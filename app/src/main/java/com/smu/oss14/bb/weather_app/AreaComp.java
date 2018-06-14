@@ -37,8 +37,6 @@ public class AreaComp extends Activity{
 
     Location_Data LData1 = new Location_Data();
     Location_Data LData2 = new Location_Data();
-    Air_Data_PM10 Pm10Data;
-    Air_Data_PM25 Pm25Data;
 
     ArrayList<Weatherinfo_Data> WDataList1 = new ArrayList<Weatherinfo_Data>();
     ArrayList<Weatherinfo_Data> WDataList2 = new ArrayList<Weatherinfo_Data>();
@@ -128,8 +126,6 @@ public class AreaComp extends Activity{
                                 WDataList1 = ReceiveWeather.parsing(response.body().string());
 
                                 DecimalFormat form = new DecimalFormat("#.#");
-//                                    Select_Location_Air SLAir = new Select_Location_Air(LData.getAddrValue()[0], Pm10Data, Pm25Data);
-//                                    String[] AirState = SLAir.ReturnAir();
 
                                 handler.post(new Runnable() {
                                     @Override
@@ -261,9 +257,6 @@ public class AreaComp extends Activity{
                                 WDataList2 = ReceiveWeather.parsing(response.body().string());
 
                                 DecimalFormat form = new DecimalFormat("#.#");
-//                                    Select_Location_Air SLAir = new Select_Location_Air(LData.getAddrValue()[0], Pm10Data, Pm25Data);
-//                                    String[] AirState = SLAir.ReturnAir();
-
 
                                 handler.post(new Runnable() {
                                     @Override

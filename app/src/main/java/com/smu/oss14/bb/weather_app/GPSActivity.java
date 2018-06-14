@@ -152,8 +152,8 @@ public class GPSActivity extends Service implements LocationListener
                         reverseGeocoding();
                         Location_data.setAddrValue(new String[]{AddrValue[1], AddrValue[2]});
                         Location_data.setAddr(Addr);
-                        Log.e("Addr", Addr);
-                        Log.e("AddrValue", AddrValue[1] + AddrValue[2]);
+//                        Log.e("Addr", Addr);
+//                        Log.e("AddrValue", AddrValue[1] + AddrValue[2]);
                     }
                 }
             } catch (Exception e) {
