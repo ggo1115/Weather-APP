@@ -30,13 +30,13 @@
 10. ReceiveAirPM10.java : PM10(미세먼지 농도)를 한국환경공단_대기오염정보 조회 서비스 API에서 파싱하여 Air_Data_PM10 클래스에 저장하는 소스코드
 11. ReceiveAirPM25.java : PM25(초미세먼지 농도)를 한국환경공단_대기오염정보 조회 서비스 API에 파싱하여 Air_Data_PM25 클래스에 저장하는 소스코드
 12. ReceiveWeather.java : 주어진 지역코드를 통해 기상청 rss에서 해당 지역의 날씨를 파싱하여 Weatherinfo_Data 클래스로 이루어진 ArrayList에 저장하는 소스코드
-13. SearchAdapter.java :
+13. SearchAdapter.java : 리스트뷰에 연결할 어답터의 기본 기능 작업
 14. Select_ForComp.java : 비교를 위한 두 지역을 선택하기 위한 소스코드(지역 2개를 모두 선택한 경우에만 지역비교한 날씨정보화면으로 넘어가도록 함)
 15. Selection_Location_Air.java : 파싱된 미세먼지 정보 중 선택한 지역 혹은 위치하고 있는 지역에 대한 미세정보 불러오기 위한 소스코드
 16. SettingActivity.java : 설정화면에서 작동하는 소스코드 ( 화씨/섭씨 설정화면, 현재위치정보제공여부 설정화면, 푸쉬알림 설정화면 으로 이동하게 함)
 17. SettingAlarm.java : 푸쉬알람을 설정하는 화면에서 작동하는 소스코드 ( 푸쉬알람을 사용하는 경우 알람 방법(소리/진동/무음), 알람 정보(눈/비, 미세먼지, 일교차), 
                         알람시각)을 설정할 수 있음)
-18. SettingArea.java :
+18. SettingArea.java : 지역 리스트 입력, 지역 검색 기능 코드(리스트 생성, 어답터 연걸, 검색 수행)
 19. SettingAreaMenu.java : 지역추가화면(지역 즐겨찾기 목록)화면에서 작동하는 코드 ( 즐겨찾기 추가한 지역을 추가 및 원하는 지역 삭제 및 지역을 선택하면 첫화면으로
                             이동하여 선택한 지역의 정보 띄움)
 20. SettingCurLocation.java : 현재위치정보제공여부 설정 화면에서 작동하는 소스 코드
@@ -52,5 +52,5 @@
 30. activity_select_comp.xml : 비교를 위한 두 지역 선택 화면 layout 소스코드
 31. activity_setting.xml : 설정화면 layout 소스코드
 32. activity_temp.xml : 화씨/섭씨 단위 설정 화면 layout 
-33. row_listview.xml :
+33. row_listview.xml : 리스트뷰의 셀에 데이터를 노출
 34. Dual-Y.html : 
