@@ -1,4 +1,4 @@
-# Weather-APP
+﻿# Weather-APP
 
 본 소프트웨어는 
 1) 현재 위치한 지역의 날씨 및 선택한 지역의 날씨를 확인하는 기능
@@ -53,4 +53,4 @@
 31. activity_setting.xml : 설정화면 layout 소스코드
 32. activity_temp.xml : 화씨/섭씨 단위 설정 화면 layout 
 33. row_listview.xml : 리스트뷰의 셀에 데이터를 노출
-34. Dual-Y.html : 
+34. Dual-Y.html : 두 지역 날씨 비교를 위한 Google Chart API(WebView)
