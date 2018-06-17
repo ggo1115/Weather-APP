@@ -18,7 +18,7 @@
 3. AreaComp.java : 지역비교화면에서 작동하는 소스코드(선택된 두 지역의 날씨를 띄어줌)
 4. BookMarkAdapter.java : 즐겨찾기 list를 위한 adapter 소스코드 ( 사용 X )
 5. GPSActivity.java : 현재위치를 사용한 날씨정보 제공하기 위해서 사용되는 소스코드(FINE_LOCATION 권한 허용여부를 판단하고, 
-                      거부된 경우에는 허용할 수 있도록 조치를 하고, 허용된 경우엔 GPS를 통해 위도 경도를 획득하고 reverse-Geocoding을 통해
+                      거부된 경우에는 허용할 수 있도록 조치를 하고, 허용된 경우엔 GPS를 통해 위도 경도를 획득하고 Geocoder 클래스를 해
                       주소를 획득한다. GPS가 꺼진 경우에는 gps를 켜도록 조치를 한다.)
 6. GlideModule.java : 이미지 로딩 라이브러리(Glide) 에서 사용되는 api 사용하기 위한 소스코드
 7. Location_Data.java : 위치정보를 담는 class소스코드(위도, 경도, 주소, 지역코드)
